@@ -31,7 +31,7 @@ Install these first:
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/<owner>/govipaura.git
+   git clone https://github.com/<owner>/govi-paura.git
    cd govipaura/backend
    ```
 2. Install PHP dependencies:
