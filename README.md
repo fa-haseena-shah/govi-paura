@@ -1,4 +1,4 @@
-# Govi Paura 🌾🚜🥕
+# Govi Paura
 
 A web-based B2B farm-to-retail marketplace platform connecting farmers directly with retailers/buyers, cutting out the middleman as the final computing project of our HND.
 
