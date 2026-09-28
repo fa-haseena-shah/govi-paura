@@ -131,7 +131,6 @@ Folders that don't have real files yet contain a `.gitkeep` placeholder — **de
 
 - **`main`** — always stable/demo-ready. Protected. Only updated via PR from `dev`.
 - **`dev`** — integration branch. All feature branches merge here first.
-- **`feature/<domain>-<short-description>`** — one branch per task, created off `dev`.
 
 ### Workflow for every task
 
