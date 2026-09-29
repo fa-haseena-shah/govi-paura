@@ -136,13 +136,13 @@ Folders that don't have real files yet contain a `.gitkeep` placeholder — **de
 
 ```bash
 git checkout dev
-git pull
-git checkout -b feature/bidding-submit-bid
-
-# ...work, commit as you go...
-
-git push -u origin feature/bidding-submit-bid
+git pull # always do this first, every session
+# ...work...
+git add .
+git commit -m "feat: add bid submission endpoint"
+git push
 ```
+
 Open a Pull Request into `dev` on GitHub. Get it reviewed by at least one other team member before merging. Before each milestone/demo, `dev` gets merged into `main` via PR and tagged (`v0.1`, `v0.2`, ...).
 
 ### Commit messages
