@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum ProduceCategory: string
+enum DeliveryCategory: string
 {
     case Paddy = 'paddy';
     case Vegetables = 'vegetables';

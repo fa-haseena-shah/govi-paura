@@ -2,7 +2,7 @@
 
 namespace App\Domains\Auth\Models;
 
-use App\Enums\ProduceCategory;
+use App\Enums\DeliveryCategory;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,7 +17,7 @@ class Rider extends Model
 
     protected function casts(): array
     {
-        return ['category' => ProduceCategory::class];
+        return ['category' => DeliveryCategory::class];
     }
 
     public function user(): BelongsTo
