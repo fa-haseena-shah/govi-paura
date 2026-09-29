@@ -2,24 +2,25 @@
 
 namespace Database\Seeders;
 
+use App\Domains\Auth\Models\Admin;
+use App\Enums\UserType;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $admin = User::factory()->withRole(UserType::Admin)->create([
+            'full_name' => 'System Admin',
+            'email' => 'admin@govipaura.test',
+            'phone' => '0770000000',
+        ]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // admins password is "password"
+        Admin::create([
+            'user_id'     => $admin->id,
+            'designation' => 'System Administrator',
         ]);
     }
 }

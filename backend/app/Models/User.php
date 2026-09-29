@@ -2,49 +2,75 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Laravel\Sanctum\HasApiTokens;
+use App\Domains\Auth\Models\Admin;
+use App\Domains\Auth\Models\Buyer;
+use App\Domains\Auth\Models\Farmer;
+use App\Domains\Auth\Models\Rider;
+use App\Enums\Language;
+use App\Enums\UserStatus;
+use App\Enums\UserType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'name',
+        'full_name',
         'email',
+        'phone',
         'password',
+        'preferred_lang',
+        'role',
+        'status',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'       => 'hashed',
+            'preferred_lang' => Language::class,
+            'role'           => UserType::class,
+            'status'         => UserStatus::class,
         ];
+    }
+
+    public function farmerProfile(): HasOne
+    {
+        return $this->hasOne(Farmer::class);
+    }
+
+    public function buyerProfile(): HasOne
+    {
+        return $this->hasOne(Buyer::class);
+    }
+
+    public function riderProfile(): HasOne
+    {
+        return $this->hasOne(Rider::class);
+    }
+
+    public function adminProfile(): HasOne
+    {
+        return $this->hasOne(Admin::class);
+    }
+
+    public function isFarmer(): bool { return $this->role === UserType::Farmer; }
+    public function isBuyer(): bool  { return $this->role === UserType::Buyer; }
+    public function isRider(): bool  { return $this->role === UserType::Rider; }
+    public function isAdmin(): bool  { return $this->role === UserType::Admin; }
+
+    public function isActive(): bool
+    {
+        return $this->status === UserStatus::Active;
     }
 }
