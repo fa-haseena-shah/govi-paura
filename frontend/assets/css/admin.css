@@ -1,0 +1,7 @@
+/* Admin portal — accent: forest (authority, oversight) */
+.gp-stat__icon.i-users { background: var(--sage-light); color: var(--forest); }
+.gp-stat__icon.i-listings { background: var(--gold-light); color: #8A6700; }
+.gp-stat__icon.i-orders { background: var(--rust-light); color: var(--rust); }
+.gp-stat__icon.i-revenue { background: #E4F3E9; color: var(--success); }
+.doc-preview { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; font-size: 12.5px; color: var(--forest); }
+.log-row { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 12.5px; }
