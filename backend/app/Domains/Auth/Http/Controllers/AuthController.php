@@ -21,8 +21,6 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request): JsonResponse
     {
-        dd('REGISTER CONTROLLER REACHED');
-
         try {
             $data = RegisterRequestData::fromArray($request->validated());
             $result = $this->authService->register($data);
