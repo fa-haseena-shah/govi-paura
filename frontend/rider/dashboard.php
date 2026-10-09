@@ -25,8 +25,8 @@ include __DIR__ . '/../includes/header.php';
 
   <div class="gp-card">
     <div class="section-head"><h3>Quick Links</h3></div>
-    <a href="<?= BASE_URL ?>/rider/available_deliveries.php" class="btn btn-outline btn-block" style="margin-bottom:10px;justify-content:flex-start;"><i class="bi bi-signpost-split"></i>&nbsp; Browse available deliveries</a>
-    <a href="<?= BASE_URL ?>/rider/assigned_deliveries.php" class="btn btn-outline btn-block" style="margin-bottom:10px;justify-content:flex-start;"><i class="bi bi-truck"></i>&nbsp; View all assigned deliveries</a>
+    <a id="available-deliveries" href="<?= BASE_URL ?>/rider/available_deliveries.php" class="btn btn-outline btn-block" style="margin-bottom:10px;justify-content:flex-start;"><i class="bi bi-signpost-split"></i>&nbsp; Browse available deliveries</a>
+    <a id="assigned-deliveries" href="<?= BASE_URL ?>/rider/assigned_deliveries.php" class="btn btn-outline btn-block" style="margin-bottom:10px;justify-content:flex-start;"><i class="bi bi-truck"></i>&nbsp; View all assigned deliveries</a>
     <a href="<?= BASE_URL ?>/rider/subscription.php" class="btn btn-outline btn-block" style="justify-content:flex-start;"><i class="bi bi-patch-check"></i>&nbsp; Manage subscription plan</a>
   </div>
 </div>
