@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#164A3A"/>
+      <stop offset="1" stop-color="#0C3B2E"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="320" rx="24" fill="url(#sky)"/>
+  <circle cx="400" cy="60" r="34" fill="#FFBA00" opacity="0.9"/>
+  <path d="M0 230 C 80 200 140 250 220 220 C 300 190 360 240 480 210 L480 320 L0 320 Z" fill="#0F4535"/>
+  <path d="M0 255 C 90 235 160 270 240 250 C 320 230 380 260 480 245 L480 320 L0 320 Z" fill="#123F30"/>
+  <g opacity="0.95">
+    <rect x="60" y="205" width="6" height="34" fill="#6D9773"/>
+    <ellipse cx="63" cy="198" rx="22" ry="14" fill="#6D9773"/>
+    <rect x="150" y="215" width="6" height="26" fill="#6D9773"/>
+    <ellipse cx="153" cy="209" rx="18" ry="11" fill="#6D9773"/>
+    <rect x="330" y="212" width="6" height="30" fill="#6D9773"/>
+    <ellipse cx="333" cy="205" rx="20" ry="13" fill="#6D9773"/>
+  </g>
+  <g transform="translate(200,140)">
+    <rect x="-70" y="30" width="140" height="60" rx="8" fill="#FFBA00"/>
+    <rect x="-70" y="30" width="140" height="16" rx="8" fill="#E8A800"/>
+    <rect x="-56" y="4" width="112" height="30" rx="6" fill="#F5F8F4"/>
+    <circle cx="-40" cy="94" r="14" fill="#0C3B2E"/>
+    <circle cx="40" cy="94" r="14" fill="#0C3B2E"/>
+    <circle cx="-40" cy="94" r="5" fill="#6D9773"/>
+    <circle cx="40" cy="94" r="5" fill="#6D9773"/>
+    <path d="M -56 4 L -70 -34 L 70 -34 L 56 4 Z" fill="#B46617"/>
+    <rect x="-46" y="-34" width="22" height="30" fill="#0C3B2E" opacity="0.4"/>
+    <rect x="-14" y="-34" width="22" height="30" fill="#0C3B2E" opacity="0.25"/>
+    <rect x="18" y="-34" width="22" height="30" fill="#0C3B2E" opacity="0.4"/>
+  </g>
+  <g transform="translate(120,250)">
+    <ellipse cx="0" cy="18" rx="20" ry="8" fill="#000" opacity="0.15"/>
+    <circle cx="0" cy="0" r="16" fill="#FBEADA"/>
+    <path d="M -16 0 C -16 -16 16 -16 16 0 Z" fill="#4E8B52"/>
+    <circle cx="-4" cy="-2" r="12" fill="#E64C36"/>
+  </g>
+</svg>

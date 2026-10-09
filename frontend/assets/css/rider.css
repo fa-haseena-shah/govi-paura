@@ -1,0 +1,17 @@
+/* Rider portal — accent: rust (motion, routes) */
+.gp-stat__icon.i-assigned { background: var(--rust-light); color: var(--rust); }
+.gp-stat__icon.i-completed { background: #E4F3E9; color: var(--success); }
+.gp-stat__icon.i-earnings { background: var(--gold-light); color: #8A6700; }
+
+.delivery-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+.route-stepper { display: flex; align-items: center; margin: 18px 0; }
+.route-stepper .step { flex: 1; text-align: center; position: relative; }
+.route-stepper .step .dot { width: 26px; height: 26px; border-radius: 50%; background: var(--line); color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 12px; font-weight: 700; }
+.route-stepper .step.done .dot { background: var(--success); }
+.route-stepper .step.current .dot { background: var(--rust); }
+.route-stepper .step:not(:last-child)::after { content: ""; position: absolute; top: 13px; left: 55%; width: 90%; height: 2px; background: var(--line); z-index: -1; }
+.route-stepper .step.done:not(:last-child)::after { background: var(--success); }
+.route-stepper .step-label { font-size: 11px; color: var(--ink-soft); }
+.plan-card { border: 1.5px solid var(--line); border-radius: var(--radius); padding: 20px; text-align: center; }
+.plan-card.current { border-color: var(--sage); background: var(--sage-light); }
+.plan-card .price { font-family: var(--font-display); font-size: 26px; color: var(--forest); margin: 8px 0; }

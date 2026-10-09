@@ -1,0 +1,12 @@
+/* Farmer portal — accent: sage (growth, listings) */
+.gp-stat__icon.i-listings { background: var(--sage-light); color: var(--forest); }
+.gp-stat__icon.i-bids { background: var(--gold-light); color: #8A6700; }
+.gp-stat__icon.i-orders { background: var(--rust-light); color: var(--rust); }
+.gp-stat__icon.i-earnings { background: #E4F3E9; color: var(--success); }
+
+.listing-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.listing-card__photo { height: 140px; background: var(--sage-light) center/cover; display: flex; align-items: center; justify-content: center; color: var(--sage); font-size: 30px; overflow: hidden; }
+.listing-card__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.listing-card__body { padding: 16px; }
+.listing-card__price { font-family: var(--font-display); font-size: 19px; color: var(--forest); }
+.bid-timer { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--rust); font-weight: 600; }

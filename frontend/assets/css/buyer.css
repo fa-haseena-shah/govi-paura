@@ -1,0 +1,23 @@
+/* Buyer portal — accent: gold (discovery, deals) */
+.gp-stat__icon.i-orders { background: var(--rust-light); color: var(--rust); }
+.gp-stat__icon.i-bids { background: var(--gold-light); color: #8A6700; }
+.gp-stat__icon.i-saved { background: var(--sage-light); color: var(--forest); }
+
+.market-filters { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+.market-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.produce-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; transition: box-shadow .15s ease; }
+.produce-card:hover { box-shadow: var(--shadow); }
+.produce-card__photo { height: 150px; background: var(--sage-light); display: flex; align-items: center; justify-content: center; color: var(--sage); font-size: 32px; position: relative; overflow: hidden; }
+.produce-card__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.produce-card__badge { position: absolute; top: 10px; left: 10px; z-index: 1; }
+.produce-card__body { padding: 15px; }
+.produce-card__price { font-family: var(--font-display); font-size: 18px; color: var(--forest); }
+.produce-card__farmer { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-soft); margin-top: 8px; }
+.listing-card__photo { background: var(--sage-light) center/cover; display: flex; align-items: center; justify-content: center; color: var(--sage); overflow: hidden; }
+.listing-card__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cart-line { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.cart-line__thumb { width: 54px; height: 54px; border-radius: 10px; background: var(--sage-light); display: flex; align-items: center; justify-content: center; color: var(--sage); }
+.qty-stepper { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.qty-stepper button { width: 28px; height: 28px; border: none; background: var(--canvas); cursor: pointer; }
+.qty-stepper input { width: 36px; text-align: center; border: none; }
+@media (max-width: 980px) { .market-grid { grid-template-columns: repeat(2, 1fr); } }
