@@ -23,6 +23,7 @@ $userName  = $userName  ?? '';          // filled in by assets/js/common.js from
 $userRole  = $userRole  ?? ucfirst($portal);
 $needsMap  = $needsMap  ?? false;
 $needsChart= $needsChart?? false;
+$needsHelpdesk = $needsHelpdesk ?? false;
 
 $brandMark = ['farmer' => 'F', 'rider' => 'R', 'buyer' => 'B', 'admin' => 'A'][$portal] ?? 'G';
 ?>
@@ -51,6 +52,9 @@ $brandMark = ['farmer' => 'F', 'rider' => 'R', 'buyer' => 'B', 'admin' => 'A'][$
 <!-- Govi Paura design system -->
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/base.css">
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/<?= htmlspecialchars($portal) ?>.css">
+<?php if ($needsHelpdesk): ?>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/helpdesk.css">
+<?php endif; ?>
 
 <!-- JS globals injected by PHP so portal scripts can build URLs without hardcoding -->
 <script>
