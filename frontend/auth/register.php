@@ -97,7 +97,6 @@ $pageTitle = 'Create Account';
             <label for="farmLocation" data-i18n="auth_farm_location">Farm location</label>
             <input type="text" id="farmLocation" name="farm_location" data-required-for-role placeholder="e.g. Kottawa, Colombo District">
             </div>
-            <p class="muted" style="font-size:12.5px;">After creating your account, log in to upload your NIC on the Verification page.</p>
         </div>
 
         <!-- Rider only -->
@@ -134,9 +133,6 @@ $pageTitle = 'Create Account';
             <input type="text" id="vehicleNumber" name="vehicle_number" data-required-for-role placeholder="e.g. CAB-1234">
             </div>
         </div>
-        <div class="field">
-            <p class="muted" style="font-size:12.5px;">After creating your account, log in to upload your NIC and vehicle registration document on the Verification page.</p>
-        </div>
         </div>
 
         <!-- Buyer only -->
@@ -159,7 +155,7 @@ $pageTitle = 'Create Account';
         <div class="field-row">
             <div class="field">
             <label for="password" data-i18n="auth_password_label">Password</label>
-            <input type="password" id="password" name="password" placeholder="••••••••" required>
+            <input type="password" id="password" name="password" minlength="8" placeholder="••••••••" required>
             </div>
             <div class="field">
             <label for="confirmPassword" data-i18n="auth_confirm_password">Confirm password</label>

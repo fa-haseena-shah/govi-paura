@@ -109,6 +109,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const pw = form.querySelector('[name="password"]');
     const confirmPw = form.querySelector('[name="confirm_password"]');
+    if (form.id === 'registerForm' && pw && pw.value && pw.value.length <= 8) {
+      ok = false;
+      fieldError(pw, 'Password must be longer than 8 characters.');
+    }
     if (pw && confirmPw && confirmPw.value) {
       if (pw.value !== confirmPw.value) {
         ok = false;
