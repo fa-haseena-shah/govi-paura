@@ -16,7 +16,7 @@
     money: (amount) => `LKR ${Number(amount ?? 0).toLocaleString('en-LK', { maximumFractionDigits: 2 })}`,
 
     formatDateTime: (value) => value
-      ? new Date(value).toLocaleString('en-LK', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+      ? new Date(value).toLocaleString('en-LK', { timeZone: 'Asia/Colombo', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
       : '—',
 
     orderRef: (id) => `#${id}`,
@@ -66,8 +66,20 @@
     toLocalInput(iso) {
       if (!iso) return '';
       const d = new Date(iso);
-      const pad = (n) => String(n).padStart(2, '0');
-      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Colombo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hourCycle: 'h23',
+      }).formatToParts(d).reduce((values, part) => {
+        values[part.type] = part.value;
+        return values;
+      }, {});
+
+      return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
     },
   };
 

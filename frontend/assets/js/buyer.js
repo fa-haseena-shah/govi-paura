@@ -594,6 +594,9 @@ document.addEventListener('DOMContentLoaded', () => {
             : `<span class="badge badge-muted">${esc(bid.status)}</span>`;
         const listing = bid.listing;
         const closing = esc(gp.formatDateTime(listing?.closingTime));
+        const rejectionReason = bid.status === 'rejected' && bid.rejection_reason
+          ? `<div class="muted" style="font-size:12px;margin-top:4px;">${esc(bid.rejection_reason)}</div>`
+          : '';
         const raise = bid.summary?.is_open
           ? `<a href="${BASE_URL_JS}/buyer/place_bid.php?id=${bid.listing_id}" class="btn btn-outline btn-sm">Raise bid</a>`
           : '';
@@ -606,7 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${money(Number(bid.amount) * Number(bid.quantity))}</td>
           <td>${bid.summary?.highest_bid == null ? '—' : `${money(bid.summary.highest_bid)} /kg`}</td>
           <td>${closing}</td>
-          <td>${badge}</td>
+          <td>${badge}${rejectionReason}</td>
           <td>${raise}</td>
         </tr>`;
       }).join('');
