@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+  function rememberAuthSuccess(message) {
+    try { sessionStorage.setItem('gp_auth_success', message); } catch (error) { /* storage may be unavailable */ }
+  }
+
   const roleInputs = document.querySelectorAll('input[name="role"]');
   if (roleInputs.length) {
     const sync = () => {
@@ -139,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       localStorage.setItem('token', result.data.token);
+      rememberAuthSuccess('Login Successful');
       const user = result.data.user;
       const needsVerification = ['farmer', 'rider'].includes(user.role)
         && ['pending_verification', 'rejected'].includes(user.status);
@@ -188,6 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify(payload),
       });
 
+      rememberAuthSuccess('Registration Successful');
       if (result.data.token) {
         localStorage.setItem('token', result.data.token);
         window.location.href = `${BASE_URL_JS}/${result.data.user.role}/dashboard.php`;
