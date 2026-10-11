@@ -10,6 +10,7 @@ use App\Domains\Notification\Http\Controllers\SmsLogController;
 use App\Domains\Bidding\Http\Controllers\BidController;
 use App\Domains\Verification\Http\Controllers\VerificationController;
 use App\Domains\Admin\Http\Controllers\DashboardController;
+use App\Domains\Notification\Http\Controllers\NotificationController;
 use App\Http\Middleware\EnsureAccountActive;
 
 Route::get('/user', function (Request $request) {
@@ -53,6 +54,10 @@ Route::middleware(['auth:sanctum', EnsureAccountActive::class])->group(function 
     Route::post('/bids/{bid}/reject', [BidController::class, 'reject'])->whereNumber('bid');
     Route::get('/listings/{listing}/bids', [BidController::class, 'listingBids'])->whereNumber('listing');
     Route::get('/listings/{listing}/bid-summary', [BidController::class, 'summary'])->whereNumber('listing'); // buyer/farmer
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
     Route::get('/sms-logs', [SmsLogController::class, 'index']);
 });
 

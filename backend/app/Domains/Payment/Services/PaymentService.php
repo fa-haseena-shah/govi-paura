@@ -6,6 +6,7 @@ use App\Domains\Order\Models\Order;
 use App\Domains\Order\Services\OrderServiceInterface;
 use App\Domains\Payment\DTOs\PayOrderData;
 use App\Domains\Payment\DTOs\PaymentResponseData;
+use App\Domains\Payment\Events\PaymentSucceeded;
 use App\Domains\Payment\Models\Payment;
 use App\Domains\Payment\Models\Receipt;
 use App\Enums\OrderStatus;
@@ -74,13 +75,14 @@ class PaymentService implements PaymentServiceInterface
             $payment->update(['status' => PaymentTransactionStatus::Success]);
 
             $receipt = Receipt::create([
-                'payment_id'     => $payment->id,
+                'payment_id' => $payment->id,
                 'receipt_number' => 'RCPT-' . now()->format('Ymd') . '-' . str_pad((string) $payment->id, 5, '0', STR_PAD_LEFT),
-                'amount'         => $payment->amount,
-                'issued_at'      => now(),
+                'amount' => $payment->amount,
+                'issued_at' => now(),
             ]);
 
             $order->update(['payment_status' => PaymentStatus::Paid]);
+            PaymentSucceeded::dispatch($order, $payment);   // notifies the farmer and the buyer
 
             return PaymentResponseData::fromModels($payment, $receipt);
         });
@@ -91,8 +93,7 @@ class PaymentService implements PaymentServiceInterface
         throw new RuntimeException('Subscription payments are not available yet.');
     }
 
-    // A new order is moved to "confirmed" when it gets paid. An order that is already past
-    // "pending" (e.g. the farmer confirmed it first) can still be paid and keeps its status.
+    // new order becomes "confirmed" when it gets paid. if an order is past pending, it can still be paid
     private function confirmIfPending(Order $order): void
     {
         if ($order->status === OrderStatus::Pending) {
@@ -121,6 +122,7 @@ class PaymentService implements PaymentServiceInterface
             ]);
 
             $order->update(['payment_status' => PaymentStatus::Paid]);
+            PaymentSucceeded::dispatch($order, $payment);// notifies farmer n buyer
             $this->confirmIfPending($order);
 
             return PaymentResponseData::fromModels($payment, $receipt);
@@ -143,7 +145,7 @@ class PaymentService implements PaymentServiceInterface
             // payment_status deliberately stays Unpaid — only confirmCashCollected() changes that
             $this->confirmIfPending($order);
 
-            return PaymentResponseData::fromModels($payment); // no receipt yet for COD
+            return PaymentResponseData::fromModels($payment); // no receipt for COD atp
         });
     }
 }

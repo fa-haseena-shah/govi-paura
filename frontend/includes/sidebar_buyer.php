@@ -15,6 +15,7 @@
     <a href="<?= BASE_URL ?>/buyer/price_trends.php" class="<?= $active === 'price_trends' ? 'active' : '' ?>"><i class="bi bi-graph-up"></i> <span data-i18n="nav_price_trends">Price Trends</span></a>
     <a href="<?= BASE_URL ?>/buyer/ratings.php" class="<?= $active === 'ratings' ? 'active' : '' ?>"><i class="bi bi-star"></i> <span data-i18n="nav_ratings">Ratings & Reviews</span></a>
     <div class="gp-nav__group-label" data-i18n="nav_account">Account</div>
+    <a href="<?= BASE_URL ?>/buyer/notifications.php" class="<?= $active === 'notifications' ? 'active' : '' ?>"><i class="bi bi-bell"></i> <span data-i18n="nav_notifications">Notifications</span></a>
     <a href="<?= BASE_URL ?>/buyer/helpdesk.php" class="<?= $active === 'helpdesk' ? 'active' : '' ?>"><i class="bi bi-life-preserver"></i> <span data-i18n="nav_helpdesk">Helpdesk</span></a>
     <a href="<?= BASE_URL ?>/buyer/profile.php" class="<?= $active === 'profile' ? 'active' : '' ?>"><i class="bi bi-person-circle"></i> <span data-i18n="nav_profile">Profile</span></a>
   </nav>

@@ -8,6 +8,7 @@ use App\Domains\Listing\DTOs\ListingResponseData;
 use App\Domains\Listing\DTOs\UpdateListingRequestData;
 use App\Domains\Listing\Models\Listing;
 use App\Domains\Notification\Services\SmsAlertServiceInterface;
+use App\Domains\Listing\Events\StockLow;
 use App\Enums\ListingStatus;
 use App\Enums\SellingMethod;
 use InvalidArgumentException;
@@ -173,9 +174,9 @@ class ListingService implements ListingServiceInterface
             ->get();
 
         return [
-            'data'    => $listings->map(fn (Listing $l) => ListingResponseData::fromModel($l))->all(),
-            'total'   => $total,
-            'page'    => $filter->page,
+            'data' => $listings->map(fn (Listing $l) => ListingResponseData::fromModel($l))->all(),
+            'total' => $total,
+            'page' => $filter->page,
             'perPage' => $filter->perPage,
         ];
     }
@@ -207,13 +208,20 @@ class ListingService implements ListingServiceInterface
         $threshold = config('govipaura.low_stock_threshold');
 
         $listing->update([
-            'qty'    => $newQty,
+            'qty' => $newQty,
             'status' => $newQty === 0 ? ListingStatus::Sold : $listing->status,
         ]);
 
-        if ($qtyBefore > $threshold && $newQty <= $threshold) {
+        $crossedThreshold = $qtyBefore > $threshold && $newQty <= $threshold;
+
+        if ($crossedThreshold) {
             $this->smsAlertService->sendLowStockAlert($listing->farmer, $listing->fresh());
         }
+
+        if ($crossedThreshold || $newQty === 0) {
+            StockLow::dispatch($listing->fresh());
+        }
+
     }
 
     private function assertSellingMethodFieldsValid(
