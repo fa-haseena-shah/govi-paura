@@ -14,10 +14,14 @@ return new class extends Migration
             $table->string('type');
             $table->string('status')->default('pending');
             $table->decimal('fee', 10, 2);
+            $table->unsignedTinyInteger('period_months')->default(1);
             $table->string('payment_status')->default('unpaid');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
+            $table->timestamp('paid_at')->nullable();
             $table->timestamps();
+
+            $table->index(['rider_id', 'status']);
         });
     }
 

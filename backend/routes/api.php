@@ -11,6 +11,7 @@ use App\Domains\Bidding\Http\Controllers\BidController;
 use App\Domains\Verification\Http\Controllers\VerificationController;
 use App\Domains\Admin\Http\Controllers\DashboardController;
 use App\Domains\Notification\Http\Controllers\NotificationController;
+use App\Domains\Subscription\Http\Controllers\SubscriptionController;
 use App\Http\Middleware\EnsureAccountActive;
 
 Route::get('/user', function (Request $request) {
@@ -59,6 +60,13 @@ Route::middleware(['auth:sanctum', EnsureAccountActive::class])->group(function 
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
     Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
     Route::get('/sms-logs', [SmsLogController::class, 'index']);
+    Route::get('/subscriptions/plans', [SubscriptionController::class, 'plans']);
+    Route::get('/subscriptions/status', [SubscriptionController::class, 'status']);
+    Route::get('/subscriptions', [SubscriptionController::class, 'index']);
+    Route::post('/subscriptions', [SubscriptionController::class, 'subscribe']);
+    Route::post('/subscriptions/renew', [SubscriptionController::class, 'renew']);
+    Route::post('/subscriptions/{subscription}/pay', [SubscriptionController::class, 'pay']);
+    Route::post('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel']);
 });
 
 Route::get('/listings', [ListingController::class, 'index']);

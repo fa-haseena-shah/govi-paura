@@ -13,6 +13,7 @@ use App\Domains\Order\Models\Order;
 use App\Domains\Order\Models\OrderItem;
 use App\Domains\Payment\Models\Payment;
 use App\Domains\Payment\Models\Receipt;
+use App\Domains\Subscription\Models\Subscription;
 use App\Enums\BidStatus;
 use App\Enums\BusinessType;
 use App\Enums\DeliveryCategory;
@@ -26,6 +27,7 @@ use App\Enums\PaymentStatus;
 use App\Enums\PaymentTransactionStatus;
 use App\Enums\SellingMethod;
 use App\Enums\SmsAlertType;
+use App\Enums\SubscriptionStatus;
 use App\Enums\UserStatus;
 use App\Enums\UserType;
 use App\Enums\VehicleType;
@@ -44,6 +46,7 @@ class DatabaseSeeder extends Seeder
         $this->seedFarmers();
         $this->seedBuyers();
         $this->seedRiders();
+        $this->seedSubscriptions();
         $this->seedListings();
         $this->seedOrders();
         $this->seedBids();
@@ -336,6 +339,48 @@ class DatabaseSeeder extends Seeder
                     'vehicle_no' => $number,
                 ]);
             }
+        }
+    }
+
+    private function seedSubscriptions(): void
+    {
+        $plan = config('subscriptions.plans.basic');
+        $activeStart = now()->startOfMonth();
+        $activeEnd = $activeStart->copy()->addMonthsNoOverflow($plan['months'])->subDay();
+        $expiredStart = now()->subMonthsNoOverflow(2)->startOfMonth();
+        $expiredEnd = $expiredStart->copy()->addMonthsNoOverflow($plan['months'])->subDay();
+
+        $subscriptions = [
+            [
+                'phone' => '0714000001',
+                'status' => SubscriptionStatus::Active,
+                'start_date' => $activeStart,
+                'end_date' => $activeEnd,
+                'paid_at' => $activeStart,
+            ],
+            [
+                'phone' => '0714000002',
+                'status' => SubscriptionStatus::Expired,
+                'start_date' => $expiredStart,
+                'end_date' => $expiredEnd,
+                'paid_at' => $expiredStart,
+            ],
+        ];
+
+        foreach ($subscriptions as $seed) {
+            $rider = User::where('phone', $seed['phone'])->firstOrFail();
+
+            Subscription::create([
+                'rider_id' => $rider->id,
+                'type' => 'basic',
+                'status' => $seed['status'],
+                'fee' => $plan['fee'],
+                'period_months' => $plan['months'],
+                'payment_status' => PaymentStatus::Paid,
+                'start_date' => $seed['start_date'],
+                'end_date' => $seed['end_date'],
+                'paid_at' => $seed['paid_at'],
+            ]);
         }
     }
 

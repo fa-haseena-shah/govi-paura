@@ -13,18 +13,21 @@ use App\Domains\Order\Events\OrderStatusChanged;
 use App\Domains\Order\Models\Order;
 use App\Domains\Payment\Events\PaymentSucceeded;
 use App\Domains\Payment\Models\Receipt;
+use App\Domains\Subscription\Events\SubscriptionExpired;
+use App\Domains\Subscription\Events\SubscriptionExpiring;
+use App\Domains\Subscription\Events\SubscriptionPaid;
 use App\Enums\BidStatus;
 use App\Enums\NotificationType;
 use App\Enums\OrderSource;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
+use App\Enums\SubscriptionStatus;
 use App\Models\User;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 // turns events fired by each domain into in-app notifications
-
 class NotificationEventSubscriber
 {
     public function __construct(private readonly NotificationServiceInterface $notifications) {}
@@ -40,10 +43,13 @@ class NotificationEventSubscriber
             PaymentSucceeded::class => 'onPaymentSucceeded',
             StockLow::class => 'onStockLow',
             DeliveryStatusChanged::class => 'onDeliveryStatusChanged',
+            SubscriptionPaid::class => 'onSubscriptionPaid',
+            SubscriptionExpiring::class => 'onSubscriptionExpiring',
+            SubscriptionExpired::class => 'onSubscriptionExpired',
         ];
     }
 
-    // farmer - buyer bid on their listing
+    // farmer: a buyer bid on their listing
     public function onBidPlaced(BidPlaced $event): void
     {
         $this->safely(function () use ($event) {
@@ -65,7 +71,7 @@ class NotificationEventSubscriber
         });
     }
 
-    // buyer - bid was rejected
+    // buyer: their bid was rejected
     public function onBidRejected(BidRejected $event): void
     {
         $this->safely(function () use ($event) {
@@ -83,7 +89,7 @@ class NotificationEventSubscriber
         });
     }
 
-    // farmer - bidding on listing has ended
+    // farmer: bidding on their listing has ended
     public function onBiddingClosed(BiddingClosed $event): void
     {
         $this->safely(function () use ($event) {
@@ -106,8 +112,7 @@ class NotificationEventSubscriber
         });
     }
 
-
-    // farmer and buyer - new order
+    // farmer and buyer: an order was created
     public function onOrderCreated(OrderCreated $event): void
     {
         $this->safely(function () use ($event) {
@@ -117,7 +122,7 @@ class NotificationEventSubscriber
             $data = array_filter(['order_id' => $order->id, 'bid_id' => $order->bid_id]);
 
             if ($order->source === OrderSource::AcceptedBid) {
-                // the farmer created this order by accepting the bid, so only the buyer is notified
+                // the farmer created this order by accepting the bid, so only the buyer hears about it
                 $this->notifications->notify(
                     $order->buyer_id,
                     NotificationType::OrderCreated,
@@ -147,7 +152,7 @@ class NotificationEventSubscriber
         });
     }
 
-    // buyer - order status changed i.e. processing, delivered, etc
+    // buyer: the farmer confirmed / processed / delivered / completed the order
     public function onOrderStatusChanged(OrderStatusChanged $event): void
     {
         $this->safely(function () use ($event) {
@@ -171,7 +176,7 @@ class NotificationEventSubscriber
         });
     }
 
-    // farmer and buyer - order payment succeeded
+    // farmer and buyer: order payment succeeded
     public function onPaymentSucceeded(PaymentSucceeded $event): void
     {
         $this->safely(function () use ($event) {
@@ -201,7 +206,7 @@ class NotificationEventSubscriber
         });
     }
 
-    // farmer - low stock / listing sold out
+    // farmer: stock is low, or the listing sold out
     public function onStockLow(StockLow $event): void
     {
         $this->safely(function () use ($event) {
@@ -220,7 +225,7 @@ class NotificationEventSubscriber
         });
     }
 
-    // buyer and farmer - delivery of their order changed status
+    // buyer and farmer: delivery of their order changed status
     public function onDeliveryStatusChanged(DeliveryStatusChanged $event): void
     {
         $this->safely(function () use ($event) {
@@ -245,7 +250,64 @@ class NotificationEventSubscriber
         });
     }
 
-    // private hlper functions
+    // rider: the payment was received and the period is active (or starts later)
+    public function onSubscriptionPaid(SubscriptionPaid $event): void
+    {
+        $this->safely(function () use ($event) {
+            $subscription = $event->subscription;
+            $amount = $this->number($event->payment->amount);
+            $start = $subscription->start_date->format('d M Y');
+            $end = $subscription->end_date->format('d M Y');
+
+            $text = $subscription->status === SubscriptionStatus::Scheduled
+                ? "It starts on {$start} and runs until {$end}."
+                : "It is active until {$end}.";
+
+            $this->notifications->notify(
+                $subscription->rider_id,
+                NotificationType::SubscriptionPaid,
+                'Subscription payment received',
+                "We received your payment of LKR {$amount}. {$text}",
+                ['subscription_id' => $subscription->id],
+            );
+        });
+    }
+
+    // rider: the subscription ends soon and has not been renewed
+    public function onSubscriptionExpiring(SubscriptionExpiring $event): void
+    {
+        $this->safely(function () use ($event) {
+            $subscription = $event->subscription;
+            $end = $subscription->end_date->format('d M Y');
+
+            $this->notifications->notify(
+                $subscription->rider_id,
+                NotificationType::SubscriptionExpiring,
+                'Your subscription ends soon',
+                "Your subscription ends on {$end}. Renew it to keep receiving deliveries.",
+                ['subscription_id' => $subscription->id],
+            );
+        });
+    }
+
+    // rider: the subscription has ended
+    public function onSubscriptionExpired(SubscriptionExpired $event): void
+    {
+        $this->safely(function () use ($event) {
+            $subscription = $event->subscription;
+            $end = $subscription->end_date->format('d M Y');
+
+            $this->notifications->notify(
+                $subscription->rider_id,
+                NotificationType::SubscriptionExpired,
+                'Your subscription has expired',
+                "Your subscription ended on {$end}. Renew it to keep receiving deliveries.",
+                ['subscription_id' => $subscription->id],
+            );
+        });
+    }
+
+    // helpers
     private function safely(callable $work): void
     {
         try {
