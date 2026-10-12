@@ -187,14 +187,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const newListingError = document.getElementById('newListingError');
     const newListingSubmitBtn = document.getElementById('newListingSubmitBtn');
 
+    function toggleGroup(box, active) {
+      box.style.display = active ? '' : 'none';
+      box.querySelectorAll('input').forEach((input) => {
+        input.disabled = !active;
+        input.required = active;
+        if (!active) {
+          input.value = '';
+          input.closest('.field')?.querySelector('.field-error')?.remove();
+        }
+      });
+    }
+
     function syncSellingMethodFields() {
-      const method = newListingForm.querySelector('input[name="selling_method"]:checked')?.value;
-      document.getElementById('fixedPriceFields').style.display = method === 'fixed_price' ? '' : 'none';
-      document.getElementById('biddingFields').style.display = method === 'bidding' ? '' : 'none';
+      const bidding = newListingForm.querySelector('input[name="selling_method"]:checked')?.value === 'bidding';
+      toggleGroup(document.getElementById('fixedPriceFields'), !bidding);
+      toggleGroup(document.getElementById('biddingFields'), bidding);
+
+      // a closing time in the past is rejected by the API, so don't offer one
+      if (bidding) document.getElementById('closingTime').min = gp.toLocalInput(new Date().toISOString());
     }
 
     if (newListingForm) {
-      newListingForm.querySelectorAll('input[name="selling_method"]').forEach((radio) => radio.addEventListener('change', syncSellingMethodFields));
+      const onMethodEvent = (e) => { if (e.target.closest('.radio-card')) syncSellingMethodFields(); };
+      newListingForm.addEventListener('click', onMethodEvent);
+      newListingForm.addEventListener('change', onMethodEvent);
       syncSellingMethodFields();
 
       document.getElementById('listingPhoto')?.addEventListener('change', (e) => {
@@ -226,6 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
           window.gpToast('Listing published!');
           bootstrap.Modal.getInstance(document.getElementById('newListingModal'))?.hide();
           newListingForm.reset();
+          newListingForm.querySelector('input[name="selling_method"]:checked')?.dispatchEvent(new Event('change', { bubbles: true }));
           document.getElementById('listingPhotoPreview').textContent = '';
           syncSellingMethodFields();
           await loadListings();

@@ -31,6 +31,11 @@ use App\Domains\Order\Listeners\CreateOrderFromAcceptedBid;
 use App\Domains\Notification\Listeners\SendNewBidAlert;
 use App\Domains\Verification\Services\VerificationServiceInterface;
 use App\Domains\Verification\Services\VerificationService;
+use App\Domains\Notification\Services\NotificationService;
+use App\Domains\Notification\Services\NotificationServiceInterface;
+use App\Domains\Notification\Listeners\NotificationEventSubscriber;
+use App\Domains\Subscription\Services\SubscriptionServiceInterface;
+use App\Domains\Subscription\Services\SubscriptionService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -50,7 +55,9 @@ class AppServiceProvider extends ServiceProvider
                 : app(LogSmsGateway::class);
         });
         $this->app->bind(SmsAlertServiceInterface::class, SmsAlertService::class);
+        $this->app->bind(NotificationServiceInterface::class, NotificationService::class);
         $this->app->bind(BidServiceInterface::class, BidService::class);
+        $this->app->bind(SubscriptionServiceInterface::class, SubscriptionService::class);
     }
 
     /**
@@ -68,5 +75,6 @@ class AppServiceProvider extends ServiceProvider
 
         Event::listen(BidAccepted::class, CreateOrderFromAcceptedBid::class);
         Event::listen(BidPlaced::class, SendNewBidAlert::class);
+        Event::subscribe(NotificationEventSubscriber::class);
     }
 }

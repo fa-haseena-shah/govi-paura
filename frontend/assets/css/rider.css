@@ -12,6 +12,9 @@
 .route-stepper .step:not(:last-child)::after { content: ""; position: absolute; top: 13px; left: 55%; width: 90%; height: 2px; background: var(--line); z-index: -1; }
 .route-stepper .step.done:not(:last-child)::after { background: var(--success); }
 .route-stepper .step-label { font-size: 11px; color: var(--ink-soft); }
-.plan-card { border: 1.5px solid var(--line); border-radius: var(--radius); padding: 20px; text-align: center; }
+.plan-card { display: grid; gap: 18px; border: 1.5px solid var(--line); border-radius: var(--radius); padding: 24px; text-align: left; }
 .plan-card.current { border-color: var(--sage); background: var(--sage-light); }
-.plan-card .price { font-family: var(--font-display); font-size: 26px; color: var(--forest); margin: 8px 0; }
+.plan-card__details { display: grid; grid-template-columns: minmax(0, 1fr); }
+.plan-card .price { font-family: var(--font-display); font-size: 26px; color: var(--forest); margin: 8px 0 0; }
+.plan-card__description { margin: 10px 0 0; }
+.plan-card__action .btn { width: 100%; }

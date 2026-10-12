@@ -6,12 +6,17 @@ use App\Domains\Order\Models\Order;
 use App\Domains\Order\Services\OrderServiceInterface;
 use App\Domains\Payment\DTOs\PayOrderData;
 use App\Domains\Payment\DTOs\PaymentResponseData;
+use App\Domains\Payment\Events\PaymentSucceeded;
 use App\Domains\Payment\Models\Payment;
 use App\Domains\Payment\Models\Receipt;
+use App\Domains\Subscription\Events\SubscriptionPaid;
+use App\Domains\Subscription\Models\Subscription;
+use App\Domains\Subscription\Services\SubscriptionServiceInterface;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Enums\PaymentTransactionStatus;
+use App\Enums\SubscriptionStatus;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use RuntimeException;
@@ -20,6 +25,7 @@ class PaymentService implements PaymentServiceInterface
 {
     public function __construct(
         private readonly OrderServiceInterface $orderService,
+        private readonly SubscriptionServiceInterface $subscriptionService,
     ) {}
 
     public function payForOrder(PayOrderData $data): PaymentResponseData
@@ -54,7 +60,7 @@ class PaymentService implements PaymentServiceInterface
 
         if ($order->farmer_id !== $confirmedByUserId) {
             throw new RuntimeException('You do not have permission to confirm payment for this order.');
-            // this should move to whichever rider is assigned to the delivery, not the farmer.
+            // this should move to whichever rider is assigned to the delivery, not the farmer
         }
 
         $payment = Payment::where('payable_type', 'order')
@@ -74,13 +80,14 @@ class PaymentService implements PaymentServiceInterface
             $payment->update(['status' => PaymentTransactionStatus::Success]);
 
             $receipt = Receipt::create([
-                'payment_id'     => $payment->id,
+                'payment_id' => $payment->id,
                 'receipt_number' => 'RCPT-' . now()->format('Ymd') . '-' . str_pad((string) $payment->id, 5, '0', STR_PAD_LEFT),
-                'amount'         => $payment->amount,
-                'issued_at'      => now(),
+                'amount' => $payment->amount,
+                'issued_at' => now(),
             ]);
 
             $order->update(['payment_status' => PaymentStatus::Paid]);
+            PaymentSucceeded::dispatch($order, $payment);   // notifies the farmer and the buyer
 
             return PaymentResponseData::fromModels($payment, $receipt);
         });
@@ -88,11 +95,55 @@ class PaymentService implements PaymentServiceInterface
 
     public function payForSubscription(int $subscriptionId, int $riderId, string $method): PaymentResponseData
     {
-        throw new RuntimeException('Subscription payments are not available yet.');
+        // subscriptions are card-only (there is no delivery to collect cash on)
+        if ($method !== PaymentMethod::Card->value) {
+            throw new InvalidArgumentException('Subscriptions can only be paid by card.');
+        }
+
+        $subscription = Subscription::find($subscriptionId);
+
+        if ($subscription === null) {
+            throw new InvalidArgumentException('Subscription not found.');
+        }
+
+        if ($subscription->rider_id !== $riderId) {
+            throw new RuntimeException('You do not have permission to pay for this subscription.');
+        }
+
+        if ($subscription->status !== SubscriptionStatus::Pending || $subscription->payment_status === PaymentStatus::Paid) {
+            throw new RuntimeException('This subscription is not awaiting payment.');
+        }
+
+        // payment, receipt and activation succeed/fail together
+        [$payment, $receipt] = DB::transaction(function () use ($subscription) {
+            $payment = Payment::create([
+                'reference' => 'SUB-' . $subscription->id . '-' . uniqid(),
+                'payable_id' => $subscription->id,
+                'payable_type' => 'subscription',
+                'amount' => $subscription->fee,
+                'currency' => 'LKR',
+                'status' => PaymentTransactionStatus::Success,
+                'method' => PaymentMethod::Card,
+            ]);
+
+            $receipt = Receipt::create([
+                'payment_id' => $payment->id,
+                'receipt_number' => 'RCPT-' . now()->format('Ymd') . '-' . str_pad((string) $payment->id, 5, '0', STR_PAD_LEFT),
+                'amount' => $payment->amount,
+                'issued_at' => now(),
+            ]);
+
+            $this->subscriptionService->activatePaid($subscription->id);
+
+            return [$payment, $receipt];
+        });
+
+        SubscriptionPaid::dispatch($subscription->fresh(), $payment);   // notifies the rider
+
+        return PaymentResponseData::fromModels($payment, $receipt);
     }
 
-    // A new order is moved to "confirmed" when it gets paid. An order that is already past
-    // "pending" (e.g. the farmer confirmed it first) can still be paid and keeps its status.
+    // new order becomes "confirmed" when it gets paid. if an order is past pending, it can still be paid
     private function confirmIfPending(Order $order): void
     {
         if ($order->status === OrderStatus::Pending) {
@@ -121,6 +172,7 @@ class PaymentService implements PaymentServiceInterface
             ]);
 
             $order->update(['payment_status' => PaymentStatus::Paid]);
+            PaymentSucceeded::dispatch($order, $payment);   // notifies farmer and buyer
             $this->confirmIfPending($order);
 
             return PaymentResponseData::fromModels($payment, $receipt);
@@ -143,7 +195,7 @@ class PaymentService implements PaymentServiceInterface
             // payment_status deliberately stays Unpaid — only confirmCashCollected() changes that
             $this->confirmIfPending($order);
 
-            return PaymentResponseData::fromModels($payment); // no receipt yet for COD
+            return PaymentResponseData::fromModels($payment); // no receipt for COD
         });
     }
 }

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Domains\Listing\Models\Listing;
 use App\Enums\ListingStatus;
 use App\Enums\SellingMethod;
+use App\Domains\Listing\Events\BiddingClosed;
 use Illuminate\Console\Command;
 
 class CloseExpiredBiddingListings extends Command
@@ -14,13 +15,18 @@ class CloseExpiredBiddingListings extends Command
 
     public function handle(): int
     {
-        $closed = Listing::query()
+        $listings = Listing::query()
             ->where('selling_method', SellingMethod::Bidding->value)
             ->where('status', ListingStatus::Active->value)
             ->where('closing_time', '<=', now())
-            ->update(['status' => ListingStatus::Closed->value]);
+            ->get();
 
-        $this->info("Closed {$closed} expired bidding listing(s).");
+        foreach ($listings as $listing) {
+            $listing->update(['status' => ListingStatus::Closed]);
+            BiddingClosed::dispatch($listing);
+        }
+
+        $this->info("Closed {$listings->count()} expired bidding listing(s).");
 
         return self::SUCCESS;
     }

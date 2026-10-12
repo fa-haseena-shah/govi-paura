@@ -10,6 +10,8 @@ use App\Domains\Order\DTOs\CheckoutPreviewItemData;
 use App\Domains\Order\DTOs\CreateBidOrderData;
 use App\Domains\Order\DTOs\CreateFixedPriceOrderData;
 use App\Domains\Order\DTOs\OrderResponseData;
+use App\Domains\Order\Events\OrderCreated;
+use App\Domains\Order\Events\OrderStatusChanged;
 use App\Domains\Order\Models\Order;
 use App\Enums\ListingStatus;
 use App\Enums\OrderSource;
@@ -136,7 +138,10 @@ class OrderService implements OrderServiceInterface
             throw new InvalidArgumentException("Cannot transition from {$order->status->value} to {$newStatus->value}.");
         }
 
+        $previous = $order->status;
         $order->update(['status' => $newStatus]);
+
+        OrderStatusChanged::dispatch($order->fresh(), $previous); // notifies the buyer
 
         return OrderResponseData::fromModel($order->fresh());
     }
@@ -291,7 +296,7 @@ class OrderService implements OrderServiceInterface
         return round(array_sum(array_column($lines, 'sub_total')), 2);
     }
 
-    // The SMS goes out after the transaction has committed, so a rolled-back
+    // sms goes out after the transaction has committed, so a rolled-back
     // order never triggers an alert.
     private function finalizeNewOrder(Order $order, bool $notifyFarmer = true): OrderResponseData
     {
@@ -300,6 +305,8 @@ class OrderService implements OrderServiceInterface
         if ($notifyFarmer) {
             $this->smsAlertService->sendNewOrderAlert($order->farmer, $order);
         }
+
+        OrderCreated::dispatch($order); // in-app notifications for the farmer and the buyer
 
         return OrderResponseData::fromModel($order);
     }

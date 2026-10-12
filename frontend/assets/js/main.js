@@ -200,6 +200,14 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => toast.remove(), 3200);
   };
 
+  try {
+    const authSuccess = sessionStorage.getItem('gp_auth_success');
+    if (authSuccess) {
+      sessionStorage.removeItem('gp_auth_success');
+      window.gpToast(authSuccess);
+    }
+  } catch (error) { /* storage may be unavailable */ }
+
   /* ---------- CSV export (client-side; used by admin list/report pages) ----------
    * Reads an on-screen <table>, skips any cell/row marked .no-export or hidden
    * by the search/filter helpers above, and downloads the rest as a .csv file.

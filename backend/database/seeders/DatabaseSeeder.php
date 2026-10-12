@@ -13,11 +13,13 @@ use App\Domains\Order\Models\Order;
 use App\Domains\Order\Models\OrderItem;
 use App\Domains\Payment\Models\Payment;
 use App\Domains\Payment\Models\Receipt;
+use App\Domains\Subscription\Models\Subscription;
 use App\Enums\BidStatus;
 use App\Enums\BusinessType;
 use App\Enums\DeliveryCategory;
 use App\Enums\Language;
 use App\Enums\ListingStatus;
+use App\Enums\NotificationType;
 use App\Enums\OrderSource;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
@@ -25,6 +27,7 @@ use App\Enums\PaymentStatus;
 use App\Enums\PaymentTransactionStatus;
 use App\Enums\SellingMethod;
 use App\Enums\SmsAlertType;
+use App\Enums\SubscriptionStatus;
 use App\Enums\UserStatus;
 use App\Enums\UserType;
 use App\Enums\VehicleType;
@@ -34,6 +37,8 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
+    private array $notificationRows = [];
+
     public function run(): void
     {
         // Seed in dependency order.
@@ -41,9 +46,11 @@ class DatabaseSeeder extends Seeder
         $this->seedFarmers();
         $this->seedBuyers();
         $this->seedRiders();
+        $this->seedSubscriptions();
         $this->seedListings();
         $this->seedOrders();
         $this->seedBids();
+        $this->seedNotifications();
     }
 
     /*
@@ -332,6 +339,48 @@ class DatabaseSeeder extends Seeder
                     'vehicle_no' => $number,
                 ]);
             }
+        }
+    }
+
+    private function seedSubscriptions(): void
+    {
+        $plan = config('subscriptions.plans.basic');
+        $activeStart = now()->startOfMonth();
+        $activeEnd = $activeStart->copy()->addMonthsNoOverflow($plan['months'])->subDay();
+        $expiredStart = now()->subMonthsNoOverflow(2)->startOfMonth();
+        $expiredEnd = $expiredStart->copy()->addMonthsNoOverflow($plan['months'])->subDay();
+
+        $subscriptions = [
+            [
+                'phone' => '0714000001',
+                'status' => SubscriptionStatus::Active,
+                'start_date' => $activeStart,
+                'end_date' => $activeEnd,
+                'paid_at' => $activeStart,
+            ],
+            [
+                'phone' => '0714000002',
+                'status' => SubscriptionStatus::Expired,
+                'start_date' => $expiredStart,
+                'end_date' => $expiredEnd,
+                'paid_at' => $expiredStart,
+            ],
+        ];
+
+        foreach ($subscriptions as $seed) {
+            $rider = User::where('phone', $seed['phone'])->firstOrFail();
+
+            Subscription::create([
+                'rider_id' => $rider->id,
+                'type' => 'basic',
+                'status' => $seed['status'],
+                'fee' => $plan['fee'],
+                'period_months' => $plan['months'],
+                'payment_status' => PaymentStatus::Paid,
+                'start_date' => $seed['start_date'],
+                'end_date' => $seed['end_date'],
+                'paid_at' => $seed['paid_at'],
+            ]);
         }
     }
 
@@ -635,5 +684,117 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => $placedAt,
             ]);
         }
+    }
+
+    private function seedNotifications(): void
+    {
+        foreach (Order::with(['items.listing', 'buyer.buyerProfile', 'farmer'])->orderBy('id')->get() as $order) {
+            $summary = $order->items->map(fn ($item) => "{$item->listing->crop_type} x{$item->qty}")->implode(', ');
+            $total = rtrim(rtrim(number_format((float) $order->total_amount, 2, '.', ''), '0'), '.');
+            $buyerName = $order->buyer->buyerProfile?->business_name ?? $order->buyer->full_name;
+            $at = $order->created_at;
+            $data = ['order_id' => $order->id];
+
+            $this->addNotification(
+                $order->buyer_id,
+                NotificationType::OrderCreated,
+                "Order #{$order->id} placed",
+                "Your order with {$order->farmer->full_name} ({$summary}) for LKR {$total} was placed.",
+                $data,
+                $at
+            );
+            $this->addNotification(
+                $order->farmer_id,
+                NotificationType::OrderCreated,
+                "New order #{$order->id}",
+                "{$buyerName} ordered {$summary} for LKR {$total}.",
+                $data,
+                $at
+            );
+
+            if ($order->status !== OrderStatus::Pending) {
+                $status = $order->status->value;
+                $this->addNotification(
+                    $order->buyer_id,
+                    NotificationType::OrderStatusUpdated,
+                    "Order #{$order->id} {$status}",
+                    "Your order #{$order->id} is now {$status}.",
+                    $data + ['status' => $status],
+                    $at->copy()->addHours(2)
+                );
+            }
+
+            if ($order->payment_status->value === 'paid') {
+                $this->addNotification(
+                    $order->farmer_id,
+                    NotificationType::PaymentCompleted,
+                    'Payment received',
+                    "{$buyerName} paid LKR {$total} for order #{$order->id}.",
+                    $data,
+                    $at->copy()->addHour()
+                );
+            }
+        }
+
+        $okra = Listing::where('crop_type', 'Okra')->firstOrFail();
+        $this->addNotification(
+            $okra->farmer_id,
+            NotificationType::LowStock,
+            'Low stock: Okra',
+            "Only {$okra->qty} kg of Okra left on your listing.",
+            ['listing_id' => $okra->id, 'qty' => (int) $okra->qty],
+            now()->subDays(2)
+        );
+
+        $ended = Listing::where('crop_type', 'Paddy (Keeri Samba)')->firstOrFail();
+        $endedBids = DB::table('bids')->where('listing_id', $ended->id)->orderBy('id')->get();
+        foreach ($endedBids as $bid) {
+            $buyer = User::with('buyerProfile')->findOrFail($bid->buyer_id);
+            $buyerName = $buyer->buyerProfile?->business_name ?? $buyer->full_name;
+            $amount = rtrim(rtrim(number_format((float) $bid->bid_amount, 2, '.', ''), '0'), '.');
+
+            $this->addNotification(
+                $ended->farmer_id,
+                NotificationType::BidPlaced,
+                "New bid on {$ended->crop_type}",
+                "{$buyerName} bid LKR {$amount}/kg for {$bid->bid_qty} kg on your {$ended->crop_type} listing.",
+                ['bid_id' => $bid->id, 'listing_id' => $ended->id],
+                \Illuminate\Support\Carbon::parse($bid->created_at)
+            );
+        }
+
+        $this->addNotification(
+            $ended->farmer_id,
+            NotificationType::BiddingClosed,
+            "Bidding closed: {$ended->crop_type}",
+            "Bidding on your {$ended->crop_type} listing has closed. You have {$endedBids->count()} bid(s) to review.",
+            ['listing_id' => $ended->id],
+            now()->subDays(3)
+        );
+
+        DB::table('user_notifications')->insert($this->notificationRows);
+    }
+
+    private function addNotification(
+        int $userId,
+        NotificationType $type,
+        string $title,
+        string $message,
+        array $data,
+        $at
+    ): void {
+        $read = $at->lt(now()->subDays(3));
+
+        $this->notificationRows[] = [
+            'user_id' => $userId,
+            'type' => $type->value,
+            'title' => $title,
+            'message' => $message,
+            'data' => json_encode($data),
+            'status' => $read ? 'read' : 'unread',
+            'read_at' => $read ? $at->copy()->addHours(5) : null,
+            'created_at' => $at,
+            'updated_at' => $at,
+        ];
     }
 }

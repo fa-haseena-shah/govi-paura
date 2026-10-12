@@ -12,9 +12,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('type');
+            $table->string('title', 120);
             $table->text('message');
+            $table->json('data')->nullable();
             $table->string('status')->default('unread');
-            $table->timestamps();                    // created_at = sent date
+            $table->timestamp('read_at')->nullable();
+            $table->timestamps();
+
+            $table->index(['user_id', 'status', 'created_at']);
         });
     }
 
