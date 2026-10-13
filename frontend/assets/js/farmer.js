@@ -47,6 +47,18 @@ document.addEventListener('DOMContentLoaded', () => {
     return `Harvested ${diff} days ago`;
   }
 
+  function maxBiddingCloseTime() {
+    const [date, time] = gp.toLocalInput(new Date().toISOString()).split('T');
+    const [year, month, day] = date.split('-').map(Number);
+    const [hour, minute] = time.split(':').map(Number);
+    const max = new Date(Date.UTC(year, month - 1, 1, hour, minute));
+    max.setUTCMonth(max.getUTCMonth() + 2);
+    const lastDay = new Date(Date.UTC(max.getUTCFullYear(), max.getUTCMonth() + 1, 0)).getUTCDate();
+    max.setUTCDate(Math.min(day, lastDay));
+    const pad = (value) => String(value).padStart(2, '0');
+    return `${max.getUTCFullYear()}-${pad(max.getUTCMonth() + 1)}-${pad(max.getUTCDate())}T${pad(max.getUTCHours())}:${pad(max.getUTCMinutes())}`;
+  }
+
   const isOnSale = (l) => l.status === 'active';
   const isFinished = (l) => ['sold', 'closed'].includes(l.status);
 
@@ -207,16 +219,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function syncSellingMethodFields() {
-      const bidding = newListingForm.querySelector('input[name="selling_method"]:checked')?.value === 'bidding';
+      const category = document.getElementById('listingCategory').value;
+      const biddingCard = document.getElementById('biddingMethodCard');
+      const radioGroup = biddingCard.parentElement;
+      const paddySelected = category === 'paddy';
+      biddingCard.style.display = paddySelected ? '' : 'none';
+      radioGroup.style.gridTemplateColumns = paddySelected ? '' : '1fr';
+
+      let bidding = newListingForm.querySelector('input[name="selling_method"]:checked')?.value === 'bidding';
+      if (!paddySelected && bidding) {
+        const fixedPriceRadio = newListingForm.querySelector('input[name="selling_method"][value="fixed_price"]');
+        fixedPriceRadio.checked = true;
+        fixedPriceRadio.closest('.radio-card').classList.add('selected');
+        biddingCard.classList.remove('selected');
+        bidding = false;
+      }
+
       toggleGroup(document.getElementById('fixedPriceFields'), !bidding);
       toggleGroup(document.getElementById('biddingFields'), bidding);
 
-      // a closing time in the past is rejected by the API, so don't offer one
-      if (bidding) document.getElementById('closingTime').min = gp.toLocalInput(new Date().toISOString());
+      if (bidding) {
+        const closingTime = document.getElementById('closingTime');
+        closingTime.min = gp.toLocalInput(new Date().toISOString());
+        closingTime.max = maxBiddingCloseTime();
+      }
     }
 
     if (newListingForm) {
       const onMethodEvent = (e) => { if (e.target.closest('.radio-card')) syncSellingMethodFields(); };
+      document.getElementById('listingCategory').addEventListener('change', syncSellingMethodFields);
       newListingForm.addEventListener('click', onMethodEvent);
       newListingForm.addEventListener('change', onMethodEvent);
       syncSellingMethodFields();
@@ -232,11 +263,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (invalid) return;
 
         newListingError.style.display = 'none';
-        newListingSubmitBtn.disabled = true;
-        newListingSubmitBtn.textContent = 'Publishing…';
-
         const formData = new FormData(newListingForm);
         const method = formData.get('selling_method');
+        const category = document.getElementById('listingCategory').value;
+
+        if (category !== 'paddy' && method === 'bidding') {
+          newListingError.textContent = 'Bidding is only available for paddy listings.';
+          newListingError.style.display = '';
+          return;
+        }
+
+        newListingSubmitBtn.disabled = true;
+        newListingSubmitBtn.textContent = 'Publishing…';
 
         // send only the fields that belong to the chosen selling method, and drop empty values
         if (method === 'fixed_price') { formData.delete('starting_price'); formData.delete('closing_time'); }
@@ -286,7 +324,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('editPriceLabel').textContent = isBidding ? 'Starting bid (LKR/kg)' : 'Price per kg (LKR)';
         document.getElementById('editPrice').value = (isBidding ? editingListing.startingPrice : editingListing.pricePerUnit) ?? '';
         document.getElementById('editClosingField').style.display = isBidding ? '' : 'none';
-        document.getElementById('editClosingTime').value = isBidding ? gp.toLocalInput(editingListing.closingTime) : '';
+        const editClosingTime = document.getElementById('editClosingTime');
+        editClosingTime.min = gp.toLocalInput(new Date().toISOString());
+        editClosingTime.max = maxBiddingCloseTime();
+        editClosingTime.value = isBidding ? gp.toLocalInput(editingListing.closingTime) : '';
 
         editListingError.style.display = 'none';
         bootstrap.Modal.getOrCreateInstance(editModalEl).show();

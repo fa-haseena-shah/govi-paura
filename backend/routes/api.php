@@ -10,6 +10,7 @@ use App\Domains\Notification\Http\Controllers\SmsLogController;
 use App\Domains\Bidding\Http\Controllers\BidController;
 use App\Domains\Verification\Http\Controllers\VerificationController;
 use App\Domains\Admin\Http\Controllers\DashboardController;
+use App\Domains\Admin\Http\Controllers\AdminManagementController;
 use App\Domains\Notification\Http\Controllers\NotificationController;
 use App\Domains\Subscription\Http\Controllers\SubscriptionController;
 use App\Domains\Rating\Http\Controllers\RatingController;
@@ -33,6 +34,16 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware(['auth:sanctum', EnsureAccountActive::class])->group(function () {
     Route::get('/admin/dashboard', DashboardController::class);
+    Route::get('/admin/users', [AdminManagementController::class, 'users']);
+    Route::patch('/admin/users/{user}/status', [AdminManagementController::class, 'updateUserStatus']);
+    Route::get('/admin/listings', [AdminManagementController::class, 'listings']);
+    Route::post('/admin/listings/{listing}/remove', [AdminManagementController::class, 'removeListing']);
+    Route::post('/admin/assisted-listings', [AdminManagementController::class, 'assistedListing']);
+    Route::get('/admin/activity', [AdminManagementController::class, 'activity']);
+    Route::patch('/admin/orders/{order}/status', [AdminManagementController::class, 'updateOrderStatus']);
+    Route::get('/admin/reports', [AdminManagementController::class, 'reports']);
+    Route::get('/admin/support-contact', [AdminManagementController::class, 'supportContact']);
+    Route::put('/admin/support-contact', [AdminManagementController::class, 'updateSupportContact']);
     Route::get('/admin/verifications', [VerificationController::class, 'index']);
     Route::get('/admin/verifications/{user}', [VerificationController::class, 'detail']);
     Route::post('/admin/verifications/{user}/approve', [VerificationController::class, 'approve']);
@@ -77,3 +88,4 @@ Route::middleware(['auth:sanctum', EnsureAccountActive::class])->group(function 
 
 Route::get('/listings', [ListingController::class, 'index']);
 Route::get('/listings/{listing}', [ListingController::class, 'show']);
+Route::get('/support-contact', [AdminManagementController::class, 'publicSupportContact']);

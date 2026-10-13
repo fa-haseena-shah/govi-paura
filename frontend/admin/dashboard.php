@@ -18,4 +18,29 @@ include __DIR__ . '/../includes/header.php';
   <a href="<?= BASE_URL ?>/admin/verify_users.php" class="btn btn-accent">Review requests</a>
 </div>
 
+<div class="gp-card">
+  <h3 style="margin-bottom:6px;">User management</h3>
+  <p class="muted">View and manage user accounts across all three roles.</p>
+  <a href="<?= BASE_URL ?>/admin/manage_users.php" class="btn btn-accent">Manage users</a>
+</div>
+
+<div class="gp-card">
+  <h3 style="margin-bottom:6px;">Listing management</h3>
+  <p class="muted">Monitor and remove misleading harvest listings or create listings on behalf of farmers.</p>
+  <a href="<?= BASE_URL ?>/admin/manage_listings.php" class="btn btn-accent">Manage listings</a>
+</div>
+
+<div class="gp-card">
+  <h3 style="margin-bottom:6px;">Bid monitoring</h3>
+  <p class="muted">Monitor bidding and order activities across the platform.</p>
+  <a href="<?= BASE_URL ?>/admin/manage_bids_orders.php" class="btn btn-accent">Monitor bids</a>
+</div>
+
+<div class="gp-card">
+  <h3 style="margin-bottom:6px;">Subscription monitoring</h3>
+  <p class="muted">Riders’ subscription payment and transaction records. 
+</p>
+  <a href="<?= BASE_URL ?>/admin/subscriptions.php" class="btn btn-accent">Monitor subscriptions</a>
+</div>
+
 <?php include __DIR__ . '/../includes/footer.php'; ?>

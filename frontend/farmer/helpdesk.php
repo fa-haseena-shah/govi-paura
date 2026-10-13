@@ -1,6 +1,6 @@
 <?php
 $portal = 'farmer'; $active = 'helpdesk'; $pageTitle = 'Helpdesk';
-$crumb = ''; $userRole = 'Farmer'; $needsHelpdesk = true;
+$crumb = ''; $userRole = 'Farmer'; $needsHelpdesk = true; $pageScript = 'support-contact';
 include __DIR__ . '/../includes/header.php';
 ?>
 
@@ -8,9 +8,9 @@ include __DIR__ . '/../includes/header.php';
   <section class="helpdesk-support" aria-labelledby="helpdeskContactTitle">
     <div class="helpdesk-support__copy">
       <h2 id="helpdeskContactTitle">Support hotline</h2>
-      <p><a href="tel:+94112345678">011 234 5678</a> · Daily, 8:00 am–6:00 pm</p>
+      <p><a id="helpdeskPhoneLink" data-support-phone href="tel:+94112345678">011 234 5678</a> · Daily, 8:00 am–6:00 pm · <a id="helpdeskEmailLink" href="mailto:support@govipaura.lk">support@govipaura.lk</a></p>
     </div>
-    <a class="btn btn-gold helpdesk-call" href="tel:+94112345678">Call support</a>
+    <a class="btn btn-gold helpdesk-call" data-support-phone href="tel:+94112345678">Call support</a>
   </div>
 
   <section class="helpdesk-section" aria-labelledby="farmerFaqTitle">

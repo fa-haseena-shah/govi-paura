@@ -174,12 +174,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         window.gpToast('Renewal created. Complete payment to activate it.');
       } else if (action === 'pay') {
-        const result = await apiFetch(`/subscriptions/${button.dataset.subscriptionId}/pay`, {
-          method: 'POST',
-          body: JSON.stringify({ method: 'card' }),
-        });
-        const receipt = result.data?.receiptNumber ? ` Receipt ${result.data.receiptNumber}.` : '';
-        window.gpToast(`Subscription payment successful.${receipt}`);
+        window.location.href = `${BASE_URL_JS}/rider/payment.php?id=${encodeURIComponent(button.dataset.subscriptionId)}`;
+        return;
       }
       await load();
     } catch (error) {

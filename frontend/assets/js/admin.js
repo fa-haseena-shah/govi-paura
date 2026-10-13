@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const paginationWrap = document.getElementById('adminListingsPagination');
   const filterPills    = document.getElementById('adminListingPills');
 
-  if (!tbody) return; // Not on manage listings page
+  if (!tbody || document.getElementById('adminListingSearch')) return; // Managed by admin-management.js
 
   let currentPage   = 1;
   let currentFilter = 'all';
