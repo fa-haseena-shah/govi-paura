@@ -32,6 +32,13 @@ document.addEventListener('DOMContentLoaded', () => {
     return '—';
   }
 
+  function ratingLabel(rating) {
+    const average = Number(rating?.average);
+    const count = Number(rating?.count) || 0;
+    if (!count || !Number.isFinite(average)) return 'No reviews';
+    return `★ ${average.toFixed(1)} (${count} ${count === 1 ? 'review' : 'reviews'})`;
+  }
+
   function harvestAgo(harvestDate) {
     if (!harvestDate) return '';
     const diff = Math.floor((Date.now() - new Date(harvestDate).getTime()) / 86400000);
@@ -119,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <h4 style="margin:0;">${esc(listing.cropType)}</h4>
             ${listingStatusBadge(listing)}
           </div>
-          <p class="muted" style="margin-bottom:6px;">${listing.qty} kg available · ${harvestAgo(listing.harvestDate)} · ${esc(listing.location)}</p>
+          <p class="muted" style="margin-bottom:6px;">${listing.qty} kg available · ${listing.harvestDate ? `${esc(listing.harvestDate)} (${harvestAgo(listing.harvestDate)})` : 'Harvest date unavailable'} · ${esc(listing.location)}</p>
           <div class="listing-card__price">${priceLabel(listing)}</div>
           <div style="display:flex;gap:8px;margin-top:12px;">${actions}</div>
         </div>`;
@@ -372,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
           : '';
         const placed = new Date(bid.created_at).toLocaleString();
         return `<tr>
-          <td>${esc(bid.buyer_name ?? `Buyer #${bid.buyer_id}`)}</td>
+          <td><strong>${esc(bid.buyer_name ?? `Buyer #${bid.buyer_id}`)}</strong><div class="muted" style="font-size:12px;">${esc(ratingLabel(bid.buyer_rating))}</div></td>
           <td><strong>${money(bid.amount)} /kg</strong></td>
           <td>${bid.quantity} kg</td>
           <td>${esc(placed)}</td>
@@ -496,6 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>${gp.orderRef(o.id)}</td>
             <td>
               <strong>${esc(o.buyerBusinessName ?? o.buyerName ?? '—')}</strong>
+              <div class="muted" style="font-size:12px;">${esc(ratingLabel(o.buyerRating))}</div>
               ${o.buyerBusinessName && o.buyerName ? `<div class="muted" style="font-size:12.5px;">${esc(o.buyerName)}</div>` : ''}
               ${o.buyerPhone ? `<div style="font-size:12.5px;"><i class="bi bi-telephone"></i> <a href="tel:${esc(o.buyerPhone)}">${esc(o.buyerPhone)}</a></div>` : ''}
             </td>

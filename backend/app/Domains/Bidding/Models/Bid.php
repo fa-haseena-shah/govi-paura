@@ -36,6 +36,8 @@ class Bid extends Model
 
     public function buyer(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'buyer_id');
+        return $this->belongsTo(User::class, 'buyer_id')
+            ->withAvg('ratingsReceived', 'score')
+            ->withCount('ratingsReceived');
     }
 }

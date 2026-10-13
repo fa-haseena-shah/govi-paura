@@ -3,6 +3,7 @@
 namespace App\Domains\Listing\DTOs;
 
 use App\Domains\Listing\Models\Listing;
+use App\Domains\Rating\DTOs\RatingBadgeData;
 use App\Enums\ListingStatus;
 use App\Enums\SellingMethod;
 

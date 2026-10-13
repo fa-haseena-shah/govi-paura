@@ -37,6 +37,7 @@ include __DIR__ . '/../includes/header.php';
         <div class="gp-user__avatar" id="farmerInitials"></div>
         <div>
           <div class="gp-user__name" id="farmerName"></div>
+          <div class="muted" style="font-size:12px;" id="farmerRating"></div>
           <div class="muted" style="font-size:12px;" id="farmerLocation"></div>
         </div>
       </div>
