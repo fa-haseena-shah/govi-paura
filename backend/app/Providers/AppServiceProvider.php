@@ -36,6 +36,8 @@ use App\Domains\Notification\Services\NotificationServiceInterface;
 use App\Domains\Notification\Listeners\NotificationEventSubscriber;
 use App\Domains\Subscription\Services\SubscriptionServiceInterface;
 use App\Domains\Subscription\Services\SubscriptionService;
+use App\Domains\Rating\Services\RatingServiceInterface;
+use App\Domains\Rating\Services\RatingService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -58,6 +60,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(NotificationServiceInterface::class, NotificationService::class);
         $this->app->bind(BidServiceInterface::class, BidService::class);
         $this->app->bind(SubscriptionServiceInterface::class, SubscriptionService::class);
+        $this->app->bind(RatingServiceInterface::class, RatingService::class);
     }
 
     /**

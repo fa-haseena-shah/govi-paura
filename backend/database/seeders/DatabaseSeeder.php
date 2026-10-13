@@ -51,6 +51,7 @@ class DatabaseSeeder extends Seeder
         $this->seedOrders();
         $this->seedBids();
         $this->seedNotifications();
+        $this->seedRatings();
     }
 
     /*
@@ -796,5 +797,44 @@ class DatabaseSeeder extends Seeder
             'created_at' => $at,
             'updated_at' => $at,
         ];
+    }
+
+    /**
+     * Reviews on completed orders:
+     *  - Ceylon Millers / Ranjith: both sides reviewed
+     *  - Cinnamon Kitchen / Nimal: only the buyer reviewed (Nimal can still review the buyer)
+     *  - Green Mart / Kamal: no reviews (both sides can submit one)
+     */
+    private function seedRatings(): void
+    {
+        $reviews = [
+            // buyer phone, farmer phone, written by ('buyer' | 'farmer'), score, comment
+            ['0713000004', '0712000004', 'buyer', 5, 'The Samba paddy was clean and well dried, and loading was on time.'],
+            ['0713000004', '0712000004', 'farmer', 5, 'Paid on time and easy to work with.'],
+            ['0713000002', '0712000002', 'buyer', 4, 'Fresh green chillies, the delivery was a little late.'],
+        ];
+
+        foreach ($reviews as [$buyerPhone, $farmerPhone, $author, $score, $comment]) {
+            $buyer = User::where('phone', $buyerPhone)->firstOrFail();
+            $farmer = User::where('phone', $farmerPhone)->firstOrFail();
+
+            // reviews belong to a completed order between these two users
+            $order = Order::where('buyer_id', $buyer->id)
+                ->where('farmer_id', $farmer->id)
+                ->where('status', OrderStatus::Completed->value)
+                ->firstOrFail();
+
+            $at = $order->created_at->copy()->addDays(2);
+
+            DB::table('ratings')->insert([
+                'order_id' => $order->id,
+                'rater_id' => $author === 'buyer' ? $buyer->id : $farmer->id,
+                'ratee_id' => $author === 'buyer' ? $farmer->id : $buyer->id,
+                'score' => $score,
+                'comment' => $comment,
+                'created_at' => $at,
+                'updated_at' => $at,
+            ]);
+        }
     }
 }

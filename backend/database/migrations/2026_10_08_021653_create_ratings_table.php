@@ -10,13 +10,15 @@ return new class extends Migration
     {
         Schema::create('ratings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('farmer_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('buyer_id')->constrained('users')->cascadeOnDelete();
-            $table->unsignedTinyInteger('score'); // 1-5, enforce in the FormRequest
+            $table->foreignId('order_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('rater_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('ratee_id')->constrained('users')->cascadeOnDelete();
+            $table->unsignedTinyInteger('score');
             $table->text('comment')->nullable();
             $table->timestamps();
 
-            $table->unique(['buyer_id', 'farmer_id']);
+            $table->unique(['order_id', 'rater_id']);
+            $table->index(['ratee_id', 'created_at']);
         });
     }
 

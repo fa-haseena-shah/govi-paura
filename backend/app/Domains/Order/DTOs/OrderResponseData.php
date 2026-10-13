@@ -3,6 +3,7 @@
 namespace App\Domains\Order\DTOs;
 
 use App\Domains\Order\Models\Order;
+use App\Domains\Rating\DTOs\RatingBadgeData;
 use App\Enums\OrderSource;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
@@ -24,6 +25,10 @@ final readonly class OrderResponseData
         public ?string $farmerName,
         public ?string $paymentMethod,
         public ?string $transactionStatus,
+        public RatingBadgeData $buyerRating,
+        public RatingBadgeData $farmerRating,
+        public bool $buyerReviewed,
+        public bool $farmerReviewed,
         /** @var OrderItemData[] */
         public array $items,
         public string $createdAt,
@@ -31,7 +36,7 @@ final readonly class OrderResponseData
 
     public static function fromModel(Order $order): self
     {
-        $order->loadMissing(['items.listing', 'buyer.buyerProfile', 'farmer', 'payments']);
+        $order->loadMissing(['items.listing', 'buyer.buyerProfile', 'farmer', 'payments', 'ratings']);
 
         // the most recent payment attempt decides what the UI shows (card / cash on delivery, pending / success)
         $payment = $order->payments->sortByDesc('id')->first();
@@ -51,6 +56,10 @@ final readonly class OrderResponseData
             farmerName: $order->farmer?->full_name,
             paymentMethod: $payment?->method->value,
             transactionStatus: $payment?->status->value,
+            buyerRating: RatingBadgeData::fromUser($order->buyer),
+            farmerRating: RatingBadgeData::fromUser($order->farmer),
+            buyerReviewed: $order->ratings->contains('rater_id', $order->buyer_id),
+            farmerReviewed: $order->ratings->contains('rater_id', $order->farmer_id),
             items: $order->items->map(fn ($item) => OrderItemData::fromModel($item))->all(),
             createdAt: $order->created_at->toIso8601String(),
         );

@@ -12,6 +12,7 @@ use App\Domains\Verification\Http\Controllers\VerificationController;
 use App\Domains\Admin\Http\Controllers\DashboardController;
 use App\Domains\Notification\Http\Controllers\NotificationController;
 use App\Domains\Subscription\Http\Controllers\SubscriptionController;
+use App\Domains\Rating\Http\Controllers\RatingController;
 use App\Http\Middleware\EnsureAccountActive;
 
 Route::get('/user', function (Request $request) {
@@ -67,6 +68,11 @@ Route::middleware(['auth:sanctum', EnsureAccountActive::class])->group(function 
     Route::post('/subscriptions/renew', [SubscriptionController::class, 'renew']);
     Route::post('/subscriptions/{subscription}/pay', [SubscriptionController::class, 'pay']);
     Route::post('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel']);
+    Route::post('/orders/{order}/ratings', [RatingController::class, 'store']);
+    Route::get('/orders/{order}/ratings', [RatingController::class, 'forOrder']);
+    Route::get('/ratings/received', [RatingController::class, 'received']);
+    Route::get('/ratings/given', [RatingController::class, 'given']);
+    Route::get('/users/{user}/ratings', [RatingController::class, 'forUser']);
 });
 
 Route::get('/listings', [ListingController::class, 'index']);

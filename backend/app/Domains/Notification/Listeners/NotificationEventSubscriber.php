@@ -13,6 +13,7 @@ use App\Domains\Order\Events\OrderStatusChanged;
 use App\Domains\Order\Models\Order;
 use App\Domains\Payment\Events\PaymentSucceeded;
 use App\Domains\Payment\Models\Receipt;
+use App\Domains\Rating\Events\RatingSubmitted;
 use App\Domains\Subscription\Events\SubscriptionExpired;
 use App\Domains\Subscription\Events\SubscriptionExpiring;
 use App\Domains\Subscription\Events\SubscriptionPaid;
@@ -25,6 +26,7 @@ use App\Enums\SubscriptionStatus;
 use App\Models\User;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Throwable;
 
 // turns events fired by each domain into in-app notifications
@@ -43,6 +45,7 @@ class NotificationEventSubscriber
             PaymentSucceeded::class => 'onPaymentSucceeded',
             StockLow::class => 'onStockLow',
             DeliveryStatusChanged::class => 'onDeliveryStatusChanged',
+            RatingSubmitted::class => 'onRatingSubmitted',
             SubscriptionPaid::class => 'onSubscriptionPaid',
             SubscriptionExpiring::class => 'onSubscriptionExpiring',
             SubscriptionExpired::class => 'onSubscriptionExpired',
@@ -247,6 +250,24 @@ class NotificationEventSubscriber
                     $data,
                 );
             }
+        });
+    }
+
+    // the person who was reviewed
+    public function onRatingSubmitted(RatingSubmitted $event): void
+    {
+        $this->safely(function () use ($event) {
+            $rating = $event->rating->loadMissing('rater.buyerProfile');
+            $name = $this->buyerName($rating->rater);
+            $comment = $rating->comment ? ' "' . Str::limit($rating->comment, 80) . '"' : '';
+
+            $this->notifications->notify(
+                $rating->ratee_id,
+                NotificationType::RatingReceived,
+                'New review',
+                "{$name} rated you {$rating->score}/5 for order #{$rating->order_id}.{$comment}",
+                ['order_id' => $rating->order_id, 'rating_id' => $rating->id],
+            );
         });
     }
 
