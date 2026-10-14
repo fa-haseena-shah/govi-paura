@@ -14,6 +14,7 @@ use App\Domains\Admin\Http\Controllers\AdminManagementController;
 use App\Domains\Notification\Http\Controllers\NotificationController;
 use App\Domains\Subscription\Http\Controllers\SubscriptionController;
 use App\Domains\Rating\Http\Controllers\RatingController;
+use App\Domains\PriceHistory\Http\Controllers\PriceHistoryController;
 use App\Http\Middleware\EnsureAccountActive;
 
 Route::get('/user', function (Request $request) {
@@ -84,6 +85,9 @@ Route::middleware(['auth:sanctum', EnsureAccountActive::class])->group(function 
     Route::get('/ratings/received', [RatingController::class, 'received']);
     Route::get('/ratings/given', [RatingController::class, 'given']);
     Route::get('/users/{user}/ratings', [RatingController::class, 'forUser']);
+    Route::get('/price-history', [PriceHistoryController::class, 'index']);
+    Route::get('/price-history/trends', [PriceHistoryController::class, 'trends']);
+    Route::get('/price-history/filters', [PriceHistoryController::class, 'filters']);
 });
 
 Route::get('/listings', [ListingController::class, 'index']);
