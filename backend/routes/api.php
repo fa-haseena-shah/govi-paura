@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Domains\Auth\Http\Controllers\AuthController;
+use App\Domains\Auth\Http\Controllers\ProfileController;
 use App\Domains\Listing\Http\Controllers\ListingController;
 use App\Domains\Order\Http\Controllers\OrderController;
 use App\Domains\Payment\Http\Controllers\PaymentController;
@@ -33,6 +34,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/verification', [VerificationController::class, 'show']);
     Route::post('/verification/documents', [VerificationController::class, 'upload']);
     Route::get('/verification/documents/{document}/file', [VerificationController::class, 'file']);
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::patch('/profile', [ProfileController::class, 'update']);
+
 });
 
 Route::middleware(['auth:sanctum', EnsureAccountActive::class])->group(function () {
