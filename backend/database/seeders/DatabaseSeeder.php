@@ -94,6 +94,8 @@ class DatabaseSeeder extends Seeder
                 '198812345671',
                 'No. 12, Temple Road, Peradeniya',
                 'Kandy',
+                7.2653,
+                80.5973,
                 Language::Sinhala,
                 UserStatus::Active,
             ],
@@ -104,6 +106,8 @@ class DatabaseSeeder extends Seeder
                 '198512345672',
                 '5 Lake Road, Matale',
                 'Matale',
+                7.4675,
+                80.6234,
                 Language::Sinhala,
                 UserStatus::Active,
             ],
@@ -114,6 +118,8 @@ class DatabaseSeeder extends Seeder
                 '199112345673',
                 '28 Hill Street, Nuwara Eliya',
                 'Nuwara Eliya',
+                6.9497,
+                80.7891,
                 Language::English,
                 UserStatus::Active,
             ],
@@ -124,16 +130,20 @@ class DatabaseSeeder extends Seeder
                 '198012345674',
                 'Paddy Road, Anuradhapura',
                 'Anuradhapura',
+                8.3114,
+                80.4037,
                 Language::Sinhala,
                 UserStatus::Active,
             ],
             [
-                'Lakmini Jayasinghe',
+                'Jayasinghe J',
                 null,
                 '0712000005',
                 '199512345675',
                 '9 Market Lane, Dambulla',
                 'Dambulla',
+                7.8567,
+                80.6492,
                 Language::Sinhala,
                 UserStatus::PendingVerification,
             ],
@@ -147,6 +157,8 @@ class DatabaseSeeder extends Seeder
                 $nic,
                 $address,
                 $region,
+                $latitude,
+                $longitude,
                 $lang,
                 $status
             ]
@@ -166,6 +178,8 @@ class DatabaseSeeder extends Seeder
                 'nic' => $nic,
                 'address' => $address,
                 'region' => $region,
+                'latitude' => $latitude,
+                'longitude' => $longitude,
             ]);
         }
     }
@@ -185,6 +199,10 @@ class DatabaseSeeder extends Seeder
                 '0713000001',
                 'Green Mart Colombo',
                 BusinessType::Retailer,
+                'No. 45, Galle Road, Colombo 03',
+                'Colombo',
+                6.9147,
+                79.8480,
                 UserStatus::Active,
             ],
             [
@@ -193,6 +211,10 @@ class DatabaseSeeder extends Seeder
                 '0713000002',
                 'Cinnamon Kitchen Restaurant',
                 BusinessType::Restaurant,
+                '18, Peradeniya Road, Kandy',
+                'Kandy',
+                7.2906,
+                80.6337,
                 UserStatus::Active,
             ],
             [
@@ -201,6 +223,10 @@ class DatabaseSeeder extends Seeder
                 '0713000003',
                 'City Fresh Supermarket',
                 BusinessType::Retailer,
+                '22, Main Street, Kurunegala',
+                'Kurunegala',
+                7.4863,
+                80.3623,
                 UserStatus::Active,
             ],
             [
@@ -209,6 +235,10 @@ class DatabaseSeeder extends Seeder
                 '0713000004',
                 'Ceylon Millers (Pvt) Ltd',
                 BusinessType::Other,
+                '10, Negombo Road, Gampaha',
+                'Gampaha',
+                7.0917,
+                79.9990,
                 UserStatus::Active,
             ],
             [
@@ -217,6 +247,10 @@ class DatabaseSeeder extends Seeder
                 '0713000005',
                 'Lanka Traders',
                 BusinessType::Other,
+                '31, High Level Road, Maharagama',
+                'Colombo',
+                6.8480,
+                79.9265,
                 UserStatus::Suspended,
             ],
         ];
@@ -228,6 +262,10 @@ class DatabaseSeeder extends Seeder
                 $phone,
                 $business,
                 $type,
+                $address,
+                $region,
+                $latitude,
+                $longitude,
                 $status
             ]
         ) {
@@ -245,6 +283,10 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $user->id,
                 'business_name' => $business,
                 'business_type' => $type,
+                'address' => $address,
+                'region' => $region,
+                'latitude' => $latitude,
+                'longitude' => $longitude,
             ]);
         }
     }

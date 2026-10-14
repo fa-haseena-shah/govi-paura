@@ -15,6 +15,8 @@ use App\Domains\Notification\Http\Controllers\NotificationController;
 use App\Domains\Subscription\Http\Controllers\SubscriptionController;
 use App\Domains\Rating\Http\Controllers\RatingController;
 use App\Domains\PriceHistory\Http\Controllers\PriceHistoryController;
+use App\Domains\Delivery\Http\Controllers\DeliveryController;
+use App\Domains\Delivery\Http\Controllers\DeliveryLocationController;
 use App\Http\Middleware\EnsureAccountActive;
 
 Route::get('/user', function (Request $request) {
@@ -88,6 +90,19 @@ Route::middleware(['auth:sanctum', EnsureAccountActive::class])->group(function 
     Route::get('/price-history', [PriceHistoryController::class, 'index']);
     Route::get('/price-history/trends', [PriceHistoryController::class, 'trends']);
     Route::get('/price-history/filters', [PriceHistoryController::class, 'filters']);
+    Route::get('/me/location', [DeliveryLocationController::class, 'show']);
+    Route::put('/me/location', [DeliveryLocationController::class, 'update']);
+    Route::get('/deliveries/opportunities', [DeliveryController::class, 'opportunities']);
+    Route::get('/deliveries/assigned', [DeliveryController::class, 'assigned']);
+    Route::get('/deliveries/history', [DeliveryController::class, 'history']);
+    Route::get('/deliveries/tracking', [DeliveryController::class, 'tracking']);
+    Route::get('/deliveries/{delivery}', [DeliveryController::class, 'show'])->whereNumber('delivery');
+    Route::get('/deliveries/{delivery}/map', [DeliveryController::class, 'map'])->whereNumber('delivery');
+    Route::post('/deliveries/{delivery}/claim', [DeliveryController::class, 'claim'])->whereNumber('delivery');
+    Route::post('/deliveries/{delivery}/release', [DeliveryController::class, 'release'])->whereNumber('delivery');
+    Route::patch('/deliveries/{delivery}/status', [DeliveryController::class, 'updateStatus'])->whereNumber('delivery');
+    Route::get('/orders/{order}/delivery', [DeliveryController::class, 'forOrder'])->whereNumber('order');
+    Route::get('/admin/deliveries', [DeliveryController::class, 'adminIndex']);
 });
 
 Route::get('/listings', [ListingController::class, 'index']);

@@ -12,7 +12,7 @@ class Buyer extends Model
     protected $primaryKey = 'user_id';
     public $incrementing = false;
 
-    protected $fillable = ['user_id', 'business_name', 'business_type'];
+    protected $fillable = ['user_id', 'business_name', 'business_type', 'address', 'region', 'latitude', 'longitude'];
 
     protected function casts(): array
     {

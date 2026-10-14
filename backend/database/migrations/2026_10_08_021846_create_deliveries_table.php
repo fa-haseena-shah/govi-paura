@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('rider_id')->nullable()->constrained('riders', 'user_id')->nullOnDelete();
             $table->string('pickup');
             $table->string('dropoff');
-            $table->string('status')->default('pending');
+            $table->string('status', 50)->default('pending');
             $table->timestamp('assigned_at')->nullable();
             $table->timestamp('delivered_at')->nullable();
             $table->timestamps();

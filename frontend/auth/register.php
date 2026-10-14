@@ -94,8 +94,12 @@ $pageTitle = 'Create Account';
         <!-- Farmer only -->
         <div data-role-section="farmer">
             <div class="field">
-            <label for="farmLocation" data-i18n="auth_farm_location">Farm location</label>
-            <input type="text" id="farmLocation" name="farm_location" data-required-for-role placeholder="e.g. Kottawa, Colombo District">
+            <label for="farmerAddress" data-i18n="auth_farm_address">Farm address</label>
+            <input type="text" id="farmerAddress" name="address" data-required-for-role placeholder="e.g. 42 Main Road, Kottawa">
+            </div>
+            <div class="field">
+            <label for="farmerRegion" data-i18n="auth_farm_region">District / Region <span class="muted" style="font-weight:400;">(optional)</span></label>
+            <input type="text" id="farmerRegion" name="region" placeholder="e.g. Colombo">
             </div>
         </div>
 
@@ -149,6 +153,14 @@ $pageTitle = 'Create Account';
                 <option value="restaurant">Restaurant</option>
                 <option value="other">Other</option>
             </select>
+            </div>
+            <div class="field">
+            <label for="buyerAddress" data-i18n="auth_delivery_address">Delivery address</label>
+            <input type="text" id="buyerAddress" name="address" data-required-for-role placeholder="e.g. 12 Galle Road, Colombo 03">
+            </div>
+            <div class="field">
+            <label for="buyerRegion" data-i18n="auth_delivery_region">District / Region <span class="muted" style="font-weight:400;">(optional)</span></label>
+            <input type="text" id="buyerRegion" name="region" placeholder="e.g. Colombo">
             </div>
         </div>
 

@@ -176,10 +176,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (role === 'farmer') {
       payload.nic = get('nic_number');
-      payload.address = get('farm_location');
+      payload.address = get('address');
+      payload.region = get('region') || null;
     } else if (role === 'buyer') {
       payload.business_name = get('business_name');
       payload.business_type = get('business_type');
+      payload.address = get('address');
+      payload.region = get('region') || null;
     } else if (role === 'rider') {
       payload.category = form.querySelector('input[name="category"]:checked')?.value;
       payload.vehicles = [

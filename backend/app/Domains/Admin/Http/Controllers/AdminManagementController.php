@@ -164,6 +164,7 @@ class AdminManagementController extends Controller
         $query = match ($type) {
             'bids' => Bid::query()->with(['buyer:id,full_name', 'listing:id,farmer_id,crop_type', 'listing.farmer:id,full_name'])->latest(),
             'orders' => Order::query()->with(['buyer:id,full_name', 'farmer:id,full_name', 'items:id,order_id,listing_id,qty,unit_price,sub_total'])->latest(),
+            default => Subscription::query()->with(['rider.user:id,full_name,email,phone', 'payments:id,payable_id,payable_type,reference,amount,currency,status,method,created_at'])->latest(),
         };
 
         return response()->json(['status' => 'success', ...$this->page($query, $request)]);

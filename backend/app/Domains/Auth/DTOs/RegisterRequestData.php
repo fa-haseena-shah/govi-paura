@@ -19,6 +19,8 @@ final readonly class RegisterRequestData
 
         // farmer only
         public ?string $nic = null,
+
+        // farmer + buyer: pickup / delivery location captured at registration
         public ?string $address = null,
         public ?string $region = null,
 
