@@ -1,9 +1,7 @@
 const API_BASE_URL = 'http://127.0.0.1:8000/api';
 
-// These calls legitimately answer 401 (wrong credentials), so they must not trigger the "session expired" redirect.
 const PUBLIC_AUTH_PATHS = ['/login', '/register'];
 
-// Laravel validation errors (422) carry the field messages in `errors`; show the first one.
 function apiErrorMessage(body, fallback) {
     if (body?.errors) {
         const first = Object.values(body.errors).flat()[0];
@@ -21,7 +19,6 @@ async function apiFetch(path, options = {}) {
         response = await fetch(`${API_BASE_URL}${path}`, {
             ...options,
             headers: {
-                // Don't set Content-Type for FormData — browser sets it with the boundary
                 ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
                 'Accept': 'application/json',
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),

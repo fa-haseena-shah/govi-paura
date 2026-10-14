@@ -6,6 +6,7 @@ use App\Domains\Auth\Models\Admin;
 use App\Domains\Auth\Models\Buyer;
 use App\Domains\Auth\Models\Farmer;
 use App\Domains\Auth\Models\Rider;
+use App\Domains\Rating\Models\Rating;
 use App\Enums\Language;
 use App\Enums\UserStatus;
 use App\Enums\UserType;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -72,5 +74,10 @@ class User extends Authenticatable
     public function isActive(): bool
     {
         return $this->status === UserStatus::Active;
+    }
+
+    public function ratingsReceived(): HasMany
+    {
+        return $this->hasMany(Rating::class, 'ratee_id');
     }
 }

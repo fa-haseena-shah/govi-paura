@@ -3,6 +3,7 @@
 namespace App\Domains\Listing\DTOs;
 
 use App\Domains\Listing\Models\Listing;
+use App\Domains\Rating\DTOs\RatingBadgeData;
 use App\Enums\ListingStatus;
 use App\Enums\SellingMethod;
 
@@ -22,6 +23,7 @@ final readonly class ListingResponseData
         public ?string $closingTime,
         public ListingStatus $status,
         public ?string $farmerName = null,
+        public ?RatingBadgeData $farmerRating = null,   // the farmer's average rating and review count
     ) {}
 
     public static function fromModel(Listing $listing): self
@@ -40,6 +42,7 @@ final readonly class ListingResponseData
             closingTime: $listing->closing_time?->toIso8601String(),
             status: $listing->status,
             farmerName: $listing->farmer?->full_name,
+            farmerRating: RatingBadgeData::fromUser($listing->farmer),
         );
     }
 }

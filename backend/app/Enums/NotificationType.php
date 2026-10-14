@@ -17,4 +17,5 @@ enum NotificationType: string
     case SubscriptionPaid = 'subscription_paid';
     case SubscriptionExpiring = 'subscription_expiring';
     case SubscriptionExpired = 'subscription_expired';
+    case RatingReceived = 'rating_received';
 }

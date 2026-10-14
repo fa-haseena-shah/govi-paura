@@ -13,6 +13,8 @@ class UpdateListingRequest extends FormRequest
 
     public function rules(): array
     {
+        $latestClosingTime = now()->addMonthsNoOverflow(2)->toDateTimeString();
+
         return [
             'crop_type' => ['sometimes', 'string', 'max:100'],
             'qty' => ['sometimes', 'integer', 'min:0'],
@@ -21,7 +23,14 @@ class UpdateListingRequest extends FormRequest
             'photo' => ['sometimes', 'nullable', 'file', 'mimes:jpg,jpeg,png', 'max:5120'],
             'price_per_unit' => ['sometimes', 'numeric', 'min:0.01'],
             'starting_price' => ['sometimes', 'numeric', 'min:0.01'],
-            'closing_time' => ['sometimes', 'date', 'after:now'],
+            'closing_time' => ['sometimes', 'date', 'after:now', 'before_or_equal:' . $latestClosingTime],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'closing_time.before_or_equal' => 'The bidding close time must be within the next two months.',
         ];
     }
 }

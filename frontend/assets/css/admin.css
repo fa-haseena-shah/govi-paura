@@ -5,3 +5,27 @@
 .gp-stat__icon.i-revenue { background: #E4F3E9; color: var(--success); }
 .doc-preview { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; font-size: 12.5px; color: var(--forest); }
 .log-row { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 12.5px; }
+.report-summary { display: flex; flex-direction: column; gap: 20px; }
+.report-summary__lead { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.report-summary__eyebrow, .report-summary__metric-label { display: block; color: var(--ink-soft); font-size: 12px; }
+.report-summary__total { display: block; margin-top: 2px; color: var(--forest); font-family: var(--font-display); font-size: 34px; font-weight: 600; line-height: 1.1; }
+.report-summary__range { max-width: 48%; color: var(--ink-soft); font-size: 12px; text-align: right; }
+.report-summary__metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; }
+.report-summary__metric { padding-top: 10px; border-top: 2px solid var(--line); }
+.report-summary__metric strong { display: block; margin-top: 3px; color: var(--ink); font-size: 17px; }
+.report-summary__group + .report-summary__group { padding-top: 16px; border-top: 1px solid var(--line); }
+.report-summary__group h3 { margin: 0 0 12px; color: var(--ink); font-family: var(--font-body); font-size: 13px; font-weight: 600; }
+.report-summary__row + .report-summary__row { margin-top: 10px; }
+.report-summary__row-head { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 5px; font-size: 12px; }
+.report-summary__row-head strong { color: var(--ink); font-weight: 600; }
+.report-summary__row-head span { color: var(--ink-soft); }
+.report-summary__bar { height: 7px; overflow: hidden; border-radius: 4px; background: var(--canvas); }
+.report-summary__bar span { display: block; height: 100%; min-width: 0; border-radius: inherit; background: var(--sage); }
+.report-summary__row:nth-child(4n + 1) .report-summary__bar span { background: var(--gold); }
+.report-summary__row:nth-child(4n + 2) .report-summary__bar span { background: var(--rust); }
+.report-summary__row:nth-child(4n + 3) .report-summary__bar span { background: var(--sage); }
+.report-summary__row:nth-child(4n + 4) .report-summary__bar span { background: var(--forest); }
+@media (max-width: 560px) {
+	.report-summary__lead { align-items: flex-start; flex-direction: column; }
+	.report-summary__range { max-width: none; text-align: left; }
+}

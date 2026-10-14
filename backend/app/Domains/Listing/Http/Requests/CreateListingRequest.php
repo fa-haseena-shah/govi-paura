@@ -15,6 +15,8 @@ class CreateListingRequest extends FormRequest
 
     public function rules(): array
     {
+        $latestClosingTime = now()->addMonthsNoOverflow(2)->toDateTimeString();
+
         return [
             'crop_type' => ['required', 'string', 'max:100'],
             'qty' => ['required', 'integer', 'min:1'],
@@ -24,7 +26,14 @@ class CreateListingRequest extends FormRequest
             'photo' => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:5120'],
             'price_per_unit' => ['required_if:selling_method,' . SellingMethod::FixedPrice->value, 'nullable', 'numeric', 'min:0.01'],
             'starting_price' => ['required_if:selling_method,' . SellingMethod::Bidding->value, 'nullable', 'numeric', 'min:0.01'],
-            'closing_time' => ['required_if:selling_method,' . SellingMethod::Bidding->value, 'nullable', 'date', 'after:now'],
+            'closing_time' => ['required_if:selling_method,' . SellingMethod::Bidding->value, 'nullable', 'date', 'after:now', 'before_or_equal:' . $latestClosingTime],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'closing_time.before_or_equal' => 'The bidding close time must be within the next two months.',
         ];
     }
 }

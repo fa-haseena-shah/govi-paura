@@ -3,6 +3,7 @@
 namespace App\Domains\Bidding\DTOs;
 
 use App\Domains\Bidding\Models\Bid;
+use App\Domains\Rating\DTOs\RatingBadgeData;
 
 final readonly class BidDTO
 {
@@ -11,6 +12,7 @@ final readonly class BidDTO
         public int $listingId,
         public int $buyerId,
         public ?string $buyerName,
+        public RatingBadgeData $buyerRating,
         public float $amount,
         public float $quantity,
         public float $totalValue,
@@ -22,6 +24,7 @@ final readonly class BidDTO
 
     public static function fromModel(Bid $bid): self
     {
+        $buyer = $bid->buyer;
         $amount = (float) $bid->bid_amount;
         $quantity = (float) $bid->bid_qty;
 
@@ -29,7 +32,8 @@ final readonly class BidDTO
             id: (int) $bid->id,
             listingId: (int) $bid->listing_id,
             buyerId: (int) $bid->buyer_id,
-            buyerName: $bid->relationLoaded('buyer') ? $bid->buyer?->name : null,
+            buyerName: $buyer?->name,
+            buyerRating: RatingBadgeData::fromUser($buyer),
             amount: $amount,
             quantity: $quantity,
             totalValue: round($amount * $quantity, 2),
@@ -47,6 +51,10 @@ final readonly class BidDTO
             'listing_id' => $this->listingId,
             'buyer_id' => $this->buyerId,
             'buyer_name' => $this->buyerName,
+            'buyer_rating' => [
+                'average' => $this->buyerRating->average,
+                'count' => $this->buyerRating->count,
+            ],
             'amount' => $this->amount,
             'quantity' => $this->quantity,
             'total_value' => $this->totalValue,

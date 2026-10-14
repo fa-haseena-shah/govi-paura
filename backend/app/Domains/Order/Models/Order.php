@@ -4,6 +4,7 @@ namespace App\Domains\Order\Models;
 
 use App\Domains\Bidding\Models\Bid;
 use App\Domains\Payment\Models\Payment;
+use App\Domains\Rating\Models\Rating;
 use App\Enums\OrderSource;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
@@ -30,8 +31,18 @@ class Order extends Model
         ];
     }
 
-    public function buyer(): BelongsTo { return $this->belongsTo(User::class, 'buyer_id'); }
-    public function farmer(): BelongsTo { return $this->belongsTo(User::class, 'farmer_id'); }
+    // the buyer and the farmer have their average rating and review count shown on orders
+    public function buyer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'buyer_id')->withAvg('ratingsReceived', 'score')->withCount('ratingsReceived');
+    }
+
+    public function farmer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'farmer_id')->withAvg('ratingsReceived', 'score')->withCount('ratingsReceived');
+    }
+
+    public function ratings(): HasMany { return $this->hasMany(Rating::class); }
     public function bid(): BelongsTo { return $this->belongsTo(Bid::class); }
     public function items(): HasMany { return $this->hasMany(OrderItem::class); }
     public function payments(): MorphMany { return $this->morphMany(Payment::class, 'payable'); }

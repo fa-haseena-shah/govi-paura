@@ -30,6 +30,9 @@ class Listing extends Model
 
     public function farmer(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'farmer_id');
+        return $this->belongsTo(User::class, 'farmer_id')
+            ->withAvg('ratingsReceived', 'score')
+            ->withCount('ratingsReceived');
     }
+
 }

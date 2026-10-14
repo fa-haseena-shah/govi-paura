@@ -45,6 +45,14 @@ include __DIR__ . '/../includes/header.php';
       </div>
       <div class="modal-body" style="padding:24px;">
         <form id="newListingForm" data-validate enctype="multipart/form-data">
+          <div class="field">
+            <label for="listingCategory">Produce category</label>
+            <select id="listingCategory" required>
+              <option value="" selected disabled>Select a category</option>
+              <option value="paddy">Paddy</option>
+              <option value="vegetables">Vegetables</option>
+            </select>
+          </div>
           <div class="field-row">
             <div class="field">
               <label for="cropType">Crop name</label>
@@ -73,7 +81,7 @@ include __DIR__ . '/../includes/header.php';
                 <input type="radio" name="selling_method" value="fixed_price" checked> <strong>Fixed price</strong>
                 <p class="muted" style="margin:4px 0 0 26px;">Buyers purchase instantly at your set price.</p>
               </label>
-              <label class="radio-card">
+              <label class="radio-card" id="biddingMethodCard" style="display:none;">
                 <input type="radio" name="selling_method" value="bidding"> <strong>Bidding</strong>
                 <p class="muted" style="margin:4px 0 0 26px;">Buyers bid until a closing time you set.</p>
               </label>

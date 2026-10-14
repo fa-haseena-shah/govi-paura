@@ -33,7 +33,7 @@ class OrderService implements OrderServiceInterface
         'completed' => [],
     ];
 
-    private const RELATIONS = ['items.listing', 'buyer.buyerProfile', 'farmer', 'payments'];
+    private const RELATIONS = ['items.listing', 'buyer.buyerProfile', 'farmer', 'payments', 'ratings'];
 
     public function __construct(
         private readonly ListingServiceInterface $listingService,
@@ -296,8 +296,7 @@ class OrderService implements OrderServiceInterface
         return round(array_sum(array_column($lines, 'sub_total')), 2);
     }
 
-    // sms goes out after the transaction has committed, so a rolled-back
-    // order never triggers an alert.
+    // sms goes out after the transaction has committed, so a rolled-back order never triggers an alert.
     private function finalizeNewOrder(Order $order, bool $notifyFarmer = true): OrderResponseData
     {
         $order->load(self::RELATIONS);

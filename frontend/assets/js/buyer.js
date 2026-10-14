@@ -45,6 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
     return '—';
   }
 
+  function ratingLabel(rating) {
+    const average = Number(rating?.average);
+    const count = Number(rating?.count) || 0;
+    if (!count || !Number.isFinite(average)) return 'No reviews';
+    return `★ ${average.toFixed(1)} (${count} ${count === 1 ? 'review' : 'reviews'})`;
+  }
+
   function produceCard(listing) {
     const badge = listing.sellingMethod === 'bidding'
       ? '<span class="badge badge-warning produce-card__badge">Bidding</span>'
@@ -62,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="produce-card__body">
         <h4 style="margin-bottom:2px;">${esc(listing.cropType)}</h4>
         <div class="produce-card__price">${priceLabel(listing)}</div>
+        <div class="muted" style="font-size:12px;margin-top:4px;"><i class="bi bi-person"></i> ${esc(listing.farmerName ?? `Farmer #${listing.farmerId}`)} · ${esc(ratingLabel(listing.farmerRating))}</div>
         <div class="produce-card__farmer"><i class="bi bi-calendar3"></i>${esc(listing.harvestDate ?? 'N/A')}</div>
         <div class="muted" style="font-size:12px;margin-top:4px;"<span class="muted"></span><i class="bi bi-geo-alt"></i>  ${esc(listing.location)}</div>
         <div class="muted" style="font-size:12px;margin-top:4px;">${listing.qty} kg available</div>
@@ -234,6 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('listingCropType').textContent = l.cropType;
         document.getElementById('listingMeta').textContent = `Listing #${l.id} · ${l.qty} kg available · ${l.location}`;
         document.getElementById('farmerName').textContent = l.farmerName ?? `Farmer #${l.farmerId}`;
+        document.getElementById('farmerRating').textContent = ratingLabel(l.farmerRating);
         document.getElementById('farmerInitials').textContent = (l.farmerName ?? 'F').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('');
         document.getElementById('farmerLocation').textContent = l.location;
         document.getElementById('harvestDate').textContent = `Harvested On: ${l.harvestDate}`;
