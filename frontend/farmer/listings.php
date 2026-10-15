@@ -56,7 +56,7 @@ include __DIR__ . '/../includes/header.php';
           <div class="field-row">
             <div class="field">
               <label for="cropType">Crop name</label>
-              <input type="text" id="cropType" name="crop_type" placeholder="e.g. Carrots" required>
+              <input type="text" id="cropType" name="crop_type" placeholder="e.g. Samba" required>
             </div>
             <div class="field">
               <label for="qty">Quantity (kg)</label>
