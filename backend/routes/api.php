@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Domains\Auth\Http\Controllers\AuthController;
 use App\Domains\Auth\Http\Controllers\ProfileController;
+use App\Domains\Reports\Http\Controllers\ReportController;
 use App\Domains\Listing\Http\Controllers\ListingController;
 use App\Domains\Order\Http\Controllers\OrderController;
 use App\Domains\Payment\Http\Controllers\PaymentController;
@@ -30,6 +31,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
+    Route::get('/reports/{role}', [ReportController::class, 'download'])
+        ->whereIn('role', ['farmer', 'buyer', 'rider']);
 
     Route::get('/verification', [VerificationController::class, 'show']);
     Route::post('/verification/documents', [VerificationController::class, 'upload']);

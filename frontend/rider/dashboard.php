@@ -1,13 +1,36 @@
 <?php
 $portal = 'rider'; $active = 'dashboard'; $pageTitle = 'Dashboard';
 $crumb = 'Your delivery activity at a glance'; $userRole = 'Delivery Rider';
+$pageScript = 'report-export';
 include __DIR__ . '/../includes/header.php';
 ?>
 
-<div class="gp-grid cols-4" id="riderDashStats" style="margin-bottom:22px;">
+<div class="gp-grid cols-3" id="riderDashStats" style="margin-bottom:22px;">
   <div class="gp-stat"><div><div class="gp-stat__label">Assigned Today</div><div class="gp-stat__value" data-stat="assigned">—</div></div><div class="gp-stat__icon i-assigned"><i class="bi bi-truck"></i></div></div>
   <div class="gp-stat"><div><div class="gp-stat__label">Completed Today</div><div class="gp-stat__value" data-stat="completed">—</div></div><div class="gp-stat__icon i-completed"><i class="bi bi-check2-circle"></i></div></div>
   <div class="gp-stat"><div><div class="gp-stat__label">Total Completed</div><div class="gp-stat__value" data-stat="earnings">—</div></div><div class="gp-stat__icon i-earnings"><i class="bi bi-cash-coin"></i></div></div>
+</div>
+
+<div class="gp-card" id="report-generator" data-report-generator data-report-role="rider" style="margin-top:20px; margin-bottom:20px;">
+  <div class="section-head"><h3>Download Reports</h3></div>
+  <form class="report-form" style="display:grid;gap:12px;">
+    <div class="gp-grid cols-4" style="align-items:end; margin:0;">
+      <label class="field" style="margin:0;">
+        <span>Report type</span>
+        <select data-report-type></select>
+      </label>
+      <label class="field" style="margin:0;">
+        <span>From</span>
+        <input data-report-from type="date">
+      </label>
+      <label class="field" style="margin:0;">
+        <span>To</span>
+        <input data-report-to type="date">
+      </label>
+      <button class="btn btn-primary" type="submit" data-report-submit>Download PDF</button>
+    </div>
+    <p class="muted" data-report-status aria-live="polite">Select a report and date range.</p>
+  </form>
 </div>
 
 <div class="gp-grid cols-2" style="align-items:start;">
