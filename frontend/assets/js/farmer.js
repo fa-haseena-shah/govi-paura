@@ -537,6 +537,10 @@ document.addEventListener('DOMContentLoaded', () => {
           next ? `<button class="btn btn-outline btn-sm" data-advance="${o.id}" data-next="${next[0]}">${next[1]}</button>` : '',
         ].join(' ');
 
+        const receiptLink = o.paymentStatus === 'paid'
+          ? `<a class="btn btn-outline btn-sm" href="${BASE_URL_JS}/farmer/receipt.php?id=${o.id}"><i class="bi bi-receipt"></i> Receipt</a>`
+          : '';
+
         return `
           <tr>
             <td>${gp.orderRef(o.id)}</td>
@@ -550,7 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>${money(o.totalAmount)}</td>
             <td>${gp.paymentBadge(o)}</td>
             <td>${gp.orderStatusBadge(o.status)}</td>
-            <td class="no-export" style="white-space:nowrap;">${actions}</td>
+            <td class="no-export" style="white-space:nowrap;">${actions} ${receiptLink}</td>
           </tr>`;
       }).join('');
     }

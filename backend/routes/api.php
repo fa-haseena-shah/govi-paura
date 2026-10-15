@@ -8,6 +8,7 @@ use App\Domains\Reports\Http\Controllers\ReportController;
 use App\Domains\Listing\Http\Controllers\ListingController;
 use App\Domains\Order\Http\Controllers\OrderController;
 use App\Domains\Payment\Http\Controllers\PaymentController;
+use App\Domains\Payment\Http\Controllers\ReceiptController;
 use App\Domains\Notification\Http\Controllers\SmsLogController;
 use App\Domains\Bidding\Http\Controllers\BidController;
 use App\Domains\Verification\Http\Controllers\VerificationController;
@@ -70,6 +71,7 @@ Route::middleware(['auth:sanctum', EnsureAccountActive::class])->group(function 
     Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus']);
     Route::post('/orders/{order}/pay', [PaymentController::class, 'payForOrder']);
     Route::post('/orders/{order}/confirm-cash-collected', [PaymentController::class, 'confirmCashCollected']);
+    Route::get('/orders/{order}/receipt', [ReceiptController::class, 'forOrder'])->whereNumber('order');
     Route::post('/bids', [BidController::class, 'store']); // buyer: submit bid
     Route::get('/bids/my', [BidController::class, 'myBids']); // buyer: my bids + status
     Route::get('/bids/{bid}', [BidController::class, 'show'])->whereNumber('bid');
