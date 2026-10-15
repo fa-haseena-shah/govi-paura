@@ -39,6 +39,7 @@ final readonly class DeliveryData
         public array $dropoff,
         public ?float $distanceKm,
         public ?int $estimatedMinutes,
+        public array $fee,
         public array $sla,
         public ?array $cashOnDelivery,
         public ?array $rider,
@@ -81,6 +82,7 @@ final readonly class DeliveryData
             ),
             distanceKm: $delivery->distance_km,
             estimatedMinutes: $delivery->estimated_minutes,
+            fee: self::fee($delivery),
             sla: self::sla($delivery),
             cashOnDelivery: $full ? self::cashOnDelivery($delivery) : null,
             rider: self::rider($delivery, $viewer),
@@ -121,6 +123,19 @@ final readonly class DeliveryData
             'contactName' => $name,
             'businessName' => $business,
             'contactPhone' => $phone,
+        ];
+    }
+
+    private static function fee(Delivery $delivery): array
+    {
+        $isAtRisk = $delivery->at_risk_at !== null;
+
+        return [
+            'baseFee'       => $delivery->fee_lkr,
+            'currentFee'    => $isAtRisk ? ($delivery->at_risk_fee_lkr ?? $delivery->fee_lkr) : $delivery->fee_lkr,
+            'atRiskFee'     => $delivery->at_risk_fee_lkr,
+            'isAtRiskRate'  => $isAtRisk && $delivery->at_risk_fee_lkr !== null,
+            'currency'      => 'LKR',
         ];
     }
 

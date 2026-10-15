@@ -50,5 +50,15 @@ return [
     ],
 
     'default_per_page' => 15,
-    'max_per_page' => 50,
+    'max_per_page'     => 50,
+
+    /*
+    | Delivery fee paid to the rider.
+    | fee_lkr = fee_rate_per_km × distance_km  (rounded to 2 d.p.)
+    | When a delivery turns at-risk the fee is multiplied by at_risk_fee_multiplier
+    | and stored in at_risk_fee_lkr so the original fee is never overwritten.
+    */
+    'fee_rate_per_km' => (float) env('DELIVERY_FEE_RATE_PER_KM', 5.0),
+    'at_risk_fee_multiplier' => (float) env('DELIVERY_AT_RISK_FEE_MULTIPLIER', 1.5),
 ];
+

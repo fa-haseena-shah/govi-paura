@@ -178,8 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const km = d.distanceKm != null ? `${Number(d.distanceKm).toFixed(1)} km` : '?';
       const mins = d.estimatedMinutes != null ? `~${d.estimatedMinutes} min` : '';
       const produceText = produceSummary(d.produce);
-      const pickup  = d.pickup?.address  ?? (d.pickup?.approximate  ? '(wait)' : 'Pickup TBD');
-      const dropoff = d.dropoff?.address ?? (d.dropoff?.approximate ? '(uhgh)' : 'Drop-off TBD');
+      const pickup  = d.pickup?.address  ?? (d.pickup?.approximate  ? '(approximate)' : 'Pickup TBD');
+      const dropoff = d.dropoff?.address ?? (d.dropoff?.approximate ? '(approximate)' : 'Drop-off TBD');
       const deadline = d.sla?.deadlineAt
         ? `<p class="muted" style="font-size:12px;margin:4px 0 0;"><i class="bi bi-clock"></i> Accept within: <span data-countdown="${esc(d.sla.deadlineAt)}"></span></p>`
         : '';
@@ -187,6 +187,16 @@ document.addEventListener('DOMContentLoaded', () => {
         ? '<span class="badge badge-danger" style="margin-left:6px;">At risk</span>'
         : '';
       const region = d.region ? esc(d.region).toLowerCase() : '';
+
+      const feeVal     = d.fee?.currentFee;
+      const feeBoosted = d.fee?.isAtRiskRate;
+      const feeHtml = feeVal != null
+        ? `<p style="font-size:13px;margin:6px 0;">
+             <i class="bi bi-cash-coin" style="color:var(--gold);"></i>
+             Fee: <strong>${money(feeVal)}</strong>
+             ${feeBoosted ? '<span class="badge badge-danger" style="margin-left:4px;">Bonus rate</span>' : ''}
+           </p>`
+        : '';
 
       return `
         <div class="delivery-card" data-delivery-id="${d.id}" data-region="${region}">
@@ -199,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <i class="bi bi-geo-alt" style="color:var(--sage);"></i> Pickup: ${esc(pickup)}<br>
             <i class="bi bi-flag" style="color:var(--rust);"></i> Drop-off: ${esc(dropoff)}
           </p>
+          ${feeHtml}
           ${deadline}
           <button class="btn btn-gold btn-block" style="margin-top:10px;" data-claim-delivery="${d.id}">
             Accept Delivery
@@ -304,9 +315,18 @@ document.addEventListener('DOMContentLoaded', () => {
         ? `<p class="muted" style="font-size:12.5px;margin:6px 0;"><i class="bi bi-cash-coin"></i> Collect ${money(d.cashOnDelivery.amountToCollect)} at door${d.cashOnDelivery.collected ? ' <span class="badge badge-success">Collected</span>' : ''}</p>`
         : '';
 
-      const deadline = d.sla?.deadlineAt
-        ? `<p class="muted" style="font-size:12px;margin:4px 0;"><i class="bi bi-clock"></i> SLA: <span data-countdown="${esc(d.sla.deadlineAt)}"></span></p>`
+      const feeVal     = d.fee?.currentFee;
+      const feeBoosted = d.fee?.isAtRiskRate;
+      const feeInfo = feeVal != null
+        ? `<p class="muted" style="font-size:12.5px;margin:6px 0;">
+             <i class="bi bi-wallet2"></i> Your fee: <strong>${money(feeVal)}</strong>
+             ${feeBoosted ? '<span class="badge badge-danger" style="margin-left:4px;">Bonus rate</span>' : ''}
+           </p>`
         : '';
+
+      // const deadline = d.sla?.deadlineAt
+      //   ? `<p class="muted" style="font-size:12px;margin:4px 0;"><i class="bi bi-clock"></i> Don't want to lose this delivery? Pick up within: <span data-countdown="${esc(d.sla.deadlineAt)}"></span></p>`
+      //   : '';
 
       const mapDivId = `deliveryMap-${d.id}`;
       const mapDiv = `<div id="${mapDivId}" style="height:240px;border-radius:var(--radius);margin-bottom:14px;"></div>`;
@@ -330,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <i class="bi bi-flag"    style="color:var(--rust);"></i> ${esc(dropoff)}
           </p>
           ${cashInfo}
-          ${deadline}
+          ${feeInfo}
           ${pickupDue}
 
           <div class="route-stepper" style="margin:14px 0;">${stepperHtml}</div>

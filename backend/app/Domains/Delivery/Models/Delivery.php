@@ -16,6 +16,7 @@ class Delivery extends Model
     protected $fillable = [
         'order_id', 'rider_id', 'pickup', 'dropoff', 'status', 'category', 'region',
         'pickup_lat', 'pickup_lng', 'dropoff_lat', 'dropoff_lng', 'distance_km', 'estimated_minutes',
+        'fee_lkr', 'at_risk_fee_lkr',
         'deadline_at', 'assigned_at', 'pickup_due_at', 'picked_up_at', 'in_transit_at',
         'delivered_at', 'at_risk_at', 'sla_breached_at',
     ];
@@ -23,21 +24,23 @@ class Delivery extends Model
     protected function casts(): array
     {
         return [
-            'status' => DeliveryStatus::class,
-            'category' => DeliveryCategory::class,
-            'pickup_lat' => 'float',
-            'pickup_lng' => 'float',
-            'dropoff_lat' => 'float',
-            'dropoff_lng' => 'float',
-            'distance_km' => 'float',
+            'status'          => DeliveryStatus::class,
+            'category'        => DeliveryCategory::class,
+            'pickup_lat'      => 'float',
+            'pickup_lng'      => 'float',
+            'dropoff_lat'     => 'float',
+            'dropoff_lng'     => 'float',
+            'distance_km'     => 'float',
             'estimated_minutes' => 'integer',
-            'deadline_at' => 'datetime',
-            'assigned_at' => 'datetime',
-            'pickup_due_at' => 'datetime',
-            'picked_up_at' => 'datetime',
-            'in_transit_at' => 'datetime',
-            'delivered_at' => 'datetime',
-            'at_risk_at' => 'datetime',
+            'fee_lkr'         => 'float',
+            'at_risk_fee_lkr' => 'float',
+            'deadline_at'     => 'datetime',
+            'assigned_at'     => 'datetime',
+            'pickup_due_at'   => 'datetime',
+            'picked_up_at'    => 'datetime',
+            'in_transit_at'   => 'datetime',
+            'delivered_at'    => 'datetime',
+            'at_risk_at'      => 'datetime',
             'sla_breached_at' => 'datetime',
         ];
     }

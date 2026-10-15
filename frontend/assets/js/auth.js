@@ -162,7 +162,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const role = form.querySelector('input[name="role"]:checked').value;
     const preferredLang = form.querySelector('input[name="preferred_lang"]:checked')?.value;
-    const get = (name) => form.querySelector(`[name="${name}"]`)?.value || null;
+
+    // Resolve the active role section element (if any) so duplicate field names
+    // like `address` and `region` are read from the right section, not the first DOM match.
+    const activeSection = form.querySelector(`[data-role-section="${role}"]`)
+      ?? form.querySelector(`[data-role-section*="${role}"]`);
+
+    const get = (name) => {
+      // Prefer a field inside the active role section; fall back to form-wide lookup.
+      const scoped = activeSection?.querySelector(`[name="${name}"]`);
+      const el = (scoped ?? form.querySelector(`[name="${name}"]`));
+      return el?.value?.trim() || null;
+    };
 
     const payload = {
       full_name: get('full_name'),

@@ -10,6 +10,7 @@ use App\Domains\Delivery\Models\Delivery;
 use App\Domains\Delivery\Models\DeliveryStatusLog;
 use App\Domains\Delivery\Support\Geo;
 use App\Domains\Notification\Services\NotificationServiceInterface;
+use App\Domains\Notification\Services\SmsAlertServiceInterface;
 use App\Domains\Order\Events\OrderStatusChanged;
 use App\Domains\Order\Models\Order;
 use App\Domains\Subscription\Services\SubscriptionServiceInterface;
@@ -31,6 +32,7 @@ class DeliveryService implements DeliveryServiceInterface
     public function __construct(
         private readonly SubscriptionServiceInterface $subscriptions,
         private readonly NotificationServiceInterface $notifications,
+        private readonly SmsAlertServiceInterface $smsAlerts,
     ) {}
 
     /* ====================================================================
@@ -63,17 +65,18 @@ class DeliveryService implements DeliveryServiceInterface
             return DB::transaction(function () use ($order, $farmer, $buyer, $pickupLat, $pickupLng, $dropoffLat, $dropoffLng, $km, $minutes, $slaHours) {
                 $delivery = Delivery::create([
                     'order_id' => $order->id,
-                    'status' => DeliveryStatus::Pending,
+                    'status'   => DeliveryStatus::Pending,
                     'category' => $this->categoryFor($order),
-                    'region' => $this->clean($farmer?->region) ?? $this->clean($buyer?->region),
-                    'pickup' => $farmer?->address ?? $order->items->first()?->listing?->location ?? 'Pickup address not provided',
-                    'dropoff' => $buyer?->address ?? 'Delivery address not provided',
-                    'pickup_lat' => $pickupLat,
-                    'pickup_lng' => $pickupLng,
+                    'region'   => $this->clean($farmer?->region) ?? $this->clean($buyer?->region),
+                    'pickup'   => $farmer?->address ?? $order->items->first()?->listing?->location ?? 'Pickup address not provided',
+                    'dropoff'  => $buyer?->address ?? 'Delivery address not provided',
+                    'pickup_lat'  => $pickupLat,
+                    'pickup_lng'  => $pickupLng,
                     'dropoff_lat' => $dropoffLat,
                     'dropoff_lng' => $dropoffLng,
-                    'distance_km' => $km,
+                    'distance_km'       => $km,
                     'estimated_minutes' => $minutes,
+                    'fee_lkr'           => $this->computeFee($km),
                     // the promise runs from the moment the ORDER was placed
                     'deadline_at' => $order->created_at->copy()->addHours($slaHours),
                 ]);
@@ -183,16 +186,6 @@ class DeliveryService implements DeliveryServiceInterface
                 throw new RuntimeException("You already hold {$active} unfinished deliveries (limit {$max}). Finish one before taking another.");
             }
 
-            // refuse a delivery that physically cannot make the deadline any more
-            $remaining = $delivery->minutesRemaining();
-
-            if ($remaining !== null && $remaining > 0 && $delivery->estimated_minutes !== null) {
-                $needed = $delivery->estimated_minutes + (int) config('delivery.min_claim_buffer_minutes');
-
-                if ($needed > $remaining) {
-                    throw new RuntimeException("Not enough time left: about {$needed} minutes are needed but only {$remaining} remain before the deadline.");
-                }
-            }
 
             $now = now();
             $pickupDue = $now->copy()->addMinutes((int) config('delivery.pickup_window_minutes'));
@@ -563,15 +556,16 @@ class DeliveryService implements DeliveryServiceInterface
             ->get();
 
         foreach ($atRisk as $delivery) {
-            $delivery->update(['at_risk_at' => now()]);
+            $delivery->update([
+                'at_risk_at'      => now(),
+                'at_risk_fee_lkr' => $this->computeAtRiskFee($delivery),
+            ]);
 
-            $left = max(0, (int) $delivery->minutesRemaining());
+            $left  = max(0, (int) $delivery->minutesRemaining());
             $state = $delivery->status === DeliveryStatus::Pending ? 'still has no rider' : "is {$delivery->status->label()}";
 
-            $this->notifyAdmins(
-                "Delivery at risk: order #{$delivery->order_id}",
-                "Order #{$delivery->order_id} {$state} with {$left} minutes left to its deadline.",
-                ['order_id' => $delivery->order_id, 'delivery_id' => $delivery->id],
+            $this->smsAdmins(fn (User $admin) =>
+                $this->smsAlerts->sendDeliveryAtRiskAlert($admin, $delivery->order_id, $state, $left)
             );
 
             $counts['at_risk']++;
@@ -587,10 +581,11 @@ class DeliveryService implements DeliveryServiceInterface
         foreach ($breached as $delivery) {
             $delivery->update(['sla_breached_at' => now()]);
 
-            $this->notifyAdmins(
-                "Delivery overdue: order #{$delivery->order_id}",
-                "Order #{$delivery->order_id} missed its " . (int) config('delivery.sla_hours') . '-hour delivery deadline and is still ' . strtolower($delivery->status->label()) . '.',
-                ['order_id' => $delivery->order_id, 'delivery_id' => $delivery->id],
+            $slaHours = (int) config('delivery.sla_hours');
+            $state    = strtolower($delivery->status->label());
+
+            $this->smsAdmins(fn (User $admin) =>
+                $this->smsAlerts->sendDeliveryOverdueAlert($admin, $delivery->order_id, $slaHours, $state)
             );
 
             $counts['breached']++;
@@ -681,6 +676,19 @@ class DeliveryService implements DeliveryServiceInterface
 
         foreach ($adminIds as $adminId) {
             $this->notifications->notify((int) $adminId, NotificationType::AdminAction, $title, $message, $data);
+        }
+    }
+
+    /** Send an SMS to every active admin by calling $callback(User $admin) for each one. */
+    private function smsAdmins(callable $callback): void
+    {
+        $admins = User::query()
+            ->where('role', UserType::Admin->value)
+            ->where('status', UserStatus::Active->value)
+            ->get();
+
+        foreach ($admins as $admin) {
+            $callback($admin);
         }
     }
 
@@ -790,5 +798,26 @@ class DeliveryService implements DeliveryServiceInterface
     private function coordinate(mixed $value): ?float
     {
         return $value === null || $value === '' ? null : (float) $value;
+    }
+
+    /** Base fee: rate_per_km × distance (null when distance is unknown). */
+    private function computeFee(?float $km): ?float
+    {
+        if ($km === null) {
+            return null;
+        }
+
+        $rate = (float) config('delivery.fee_rate_per_km');
+
+        return round($rate * $km, 2);
+    }
+
+    /** At-risk fee: base fee × multiplier (falls back to base fee if base is null). */
+    private function computeAtRiskFee(Delivery $delivery): ?float
+    {
+        $base       = $delivery->fee_lkr;
+        $multiplier = (float) config('delivery.at_risk_fee_multiplier');
+
+        return $base !== null ? round($base * $multiplier, 2) : null;
     }
 }

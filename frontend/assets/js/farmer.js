@@ -517,7 +517,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const NEXT = {
       pending: ['confirmed', 'Confirm order'],
       confirmed: ['processing', 'Start processing'],
-      processing: ['delivered', 'Mark delivered'],
       delivered: ['completed', 'Complete order'],
     };
 
@@ -536,7 +535,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const cashPending = o.paymentMethod === 'cash_on_delivery' && o.transactionStatus === 'pending';
         const actions = [
           next ? `<button class="btn btn-outline btn-sm" data-advance="${o.id}" data-next="${next[0]}">${next[1]}</button>` : '',
-          cashPending ? `<button class="btn btn-accent btn-sm" data-cash="${o.id}">Cash received</button>` : '',
         ].join(' ');
 
         return `
