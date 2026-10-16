@@ -441,10 +441,14 @@ class DatabaseSeeder extends Seeder
 
     $listings = [
         // Kamal Perera — Kandy
-        ['0712000001', 'Tomato', 100, 120.00, $fixed, null, null, $active, 'Kandy', 3, 20],
-        ['0712000001', 'Okra', 8, 200.00, $fixed, null, null, $active, 'Kandy', 2, 15],
+        ['0712000001', 'Bandakka', 100, 120.00, $fixed, null, null, $active, 'Kandy', 3, 20],
+        ['0712000001', 'Tomato', 8, 200.00, $fixed, null, null, $active, 'Kandy', 2, 15],
         ['0712000001', 'Pumpkin', 60, 70.00, $fixed, null, null, ListingStatus::Closed, 'Kandy', 12, 25],
         ['0712000001', 'Snake Gourd', 0, 90.00, $fixed, null, null, ListingStatus::Unavailable, 'Kandy', 8, 22],
+        // Paddy bidding — closes BEFORE 21 October 2026
+        ['0712000001', 'Paddy (Nadu)', 5000, null, $bidding, 95.00, \Carbon\Carbon::parse('2026-10-20 18:00:00'), $active, 'Anuradhapura', 7, 5],
+        // Paddy bidding — closes AFTER 21 October 2026
+        ['0712000001', 'Paddy (Keeri Samba)', 3000, null, $bidding, 120.00, \Carbon\Carbon::parse('2026-10-22 18:00:00'), $active, 'Anuradhapura', 5, 3],
 
         // Nimal Silva — Matale
         ['0712000002', 'Beans', 80, 150.00, $fixed, null, null, $active, 'Matale', 4, 18],
@@ -459,11 +463,6 @@ class DatabaseSeeder extends Seeder
         // Ranjith Bandara — Anuradhapura
         ['0712000004', 'Paddy (Samba)', 8000, 130.00, $fixed, null, null, $active, 'Anuradhapura', 10, 30],
 
-        // Paddy bidding — closes BEFORE 21 October 2026
-        ['0712000004', 'Paddy (Nadu)', 5000, null, $bidding, 95.00, \Carbon\Carbon::parse('2026-10-20 18:00:00'), $active, 'Anuradhapura', 7, 5],
-
-        // Paddy bidding — closes AFTER 21 October 2026
-        ['0712000004', 'Paddy (Keeri Samba)', 3000, null, $bidding, 120.00, \Carbon\Carbon::parse('2026-10-22 18:00:00'), $active, 'Anuradhapura', 5, 3],
 
         // Additional listings — Kamal Perera, Kandy
         ['0712000001', 'Cucumber', 75, 85.00, $fixed, null, null, $active, 'Kandy', 2, 6],
@@ -481,7 +480,7 @@ class DatabaseSeeder extends Seeder
         ['0712000003', 'Radish', 55, 70.00, $fixed, null, null, $active, 'Nuwara Eliya', 1, 1],
 
         // Additional listings — Ranjith Bandara, Anuradhapura
-        ['0712000004', 'Maize', 2000, 85.00, $fixed, null, null, $active, 'Anuradhapura', 8, 12],
+        ['0712000004', 'Corn', 2000, 85.00, $fixed, null, null, $active, 'Anuradhapura', 8, 12],
         ['0712000004', 'Green Gram', 600, 150.00, $fixed, null, null, $active, 'Anuradhapura', 5, 3],
         ['0712000004', 'Watermelon', 500, 75.00, $fixed, null, null, $active, 'Anuradhapura', 2, 4],
     ];
