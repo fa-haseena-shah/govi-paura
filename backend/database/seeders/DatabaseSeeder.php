@@ -434,36 +434,57 @@ class DatabaseSeeder extends Seeder
     */
 
     private function seedListings(): void
-    {
-        $fixed = SellingMethod::FixedPrice;
-        $bidding = SellingMethod::Bidding;
-        $active = ListingStatus::Active;
+{
+    $fixed = SellingMethod::FixedPrice;
+    $bidding = SellingMethod::Bidding;
+    $active = ListingStatus::Active;
 
-        // Farmer phone, crop, quantity, price, selling method,
-        // starting price, closing time, status, location,
-        // days since harvest, days since listing.
-        $listings = [
-            // Kamal Perera — Kandy
-            ['0712000001', 'Tomato', 100, 120.00, $fixed, null, null, $active, 'Kandy', 3, 20],
-            ['0712000001', 'Okra', 8, 200.00, $fixed, null, null, $active, 'Kandy', 2, 15],
-            ['0712000001', 'Pumpkin', 60, 70.00, $fixed, null, null, ListingStatus::Closed, 'Kandy', 12, 25],
-            ['0712000001', 'Snake Gourd', 0, 90.00, $fixed, null, null, ListingStatus::Unavailable, 'Kandy', 8, 22],
+    $listings = [
+        // Kamal Perera — Kandy
+        ['0712000001', 'Tomato', 100, 120.00, $fixed, null, null, $active, 'Kandy', 3, 20],
+        ['0712000001', 'Okra', 8, 200.00, $fixed, null, null, $active, 'Kandy', 2, 15],
+        ['0712000001', 'Pumpkin', 60, 70.00, $fixed, null, null, ListingStatus::Closed, 'Kandy', 12, 25],
+        ['0712000001', 'Snake Gourd', 0, 90.00, $fixed, null, null, ListingStatus::Unavailable, 'Kandy', 8, 22],
 
-            // Nimal Silva — Matale
-            ['0712000002', 'Beans', 80, 150.00, $fixed, null, null, $active, 'Matale', 4, 18],
-            ['0712000002', 'Brinjal', 50, 110.00, $fixed, null, null, $active, 'Matale', 3, 16],
-            ['0712000002', 'Green Chilli', 40, 300.00, $fixed, null, null, $active, 'Matale', 5, 24],
+        // Nimal Silva — Matale
+        ['0712000002', 'Beans', 80, 150.00, $fixed, null, null, $active, 'Matale', 4, 18],
+        ['0712000002', 'Brinjal', 50, 110.00, $fixed, null, null, $active, 'Matale', 3, 16],
+        ['0712000002', 'Green Chilli', 40, 300.00, $fixed, null, null, $active, 'Matale', 5, 24],
 
-            // Sunethra Wickramasinghe — Nuwara Eliya
-            ['0712000003', 'Carrot', 100, 80.00, $fixed, null, null, $active, 'Nuwara Eliya', 3, 19],
-            ['0712000003', 'Cabbage', 60, 60.00, $fixed, null, null, $active, 'Nuwara Eliya', 4, 17],
-            ['0712000003', 'Leeks', 40, 140.00, $fixed, null, null, $active, 'Nuwara Eliya', 2, 10],
+        // Sunethra Wickramasinghe — Nuwara Eliya
+        ['0712000003', 'Carrot', 100, 80.00, $fixed, null, null, $active, 'Nuwara Eliya', 3, 19],
+        ['0712000003', 'Cabbage', 60, 60.00, $fixed, null, null, $active, 'Nuwara Eliya', 4, 17],
+        ['0712000003', 'Leeks', 40, 140.00, $fixed, null, null, $active, 'Nuwara Eliya', 2, 10],
 
-            // Ranjith Bandara — Anuradhapura
-            ['0712000004', 'Paddy (Samba)', 8000, 130.00, $fixed, null, null, $active, 'Anuradhapura', 10, 30],
-            ['0712000004', 'Paddy (Nadu)', 5000, null, $bidding, 95.00, now()->addDays(14), $active, 'Anuradhapura', 7, 5],
-            ['0712000004', 'Paddy (Keeri Samba)', 3000, null, $bidding, 120.00, now()->subDays(3), ListingStatus::Closed, 'Anuradhapura', 20, 28],
-        ];
+        // Ranjith Bandara — Anuradhapura
+        ['0712000004', 'Paddy (Samba)', 8000, 130.00, $fixed, null, null, $active, 'Anuradhapura', 10, 30],
+
+        // Paddy bidding — closes BEFORE 21 October 2026
+        ['0712000004', 'Paddy (Nadu)', 5000, null, $bidding, 95.00, \Carbon\Carbon::parse('2026-10-20 18:00:00'), $active, 'Anuradhapura', 7, 5],
+
+        // Paddy bidding — closes AFTER 21 October 2026
+        ['0712000004', 'Paddy (Keeri Samba)', 3000, null, $bidding, 120.00, \Carbon\Carbon::parse('2026-10-22 18:00:00'), $active, 'Anuradhapura', 5, 3],
+
+        // Additional listings — Kamal Perera, Kandy
+        ['0712000001', 'Cucumber', 75, 85.00, $fixed, null, null, $active, 'Kandy', 2, 6],
+        ['0712000001', 'Bitter Gourd', 35, 180.00, $fixed, null, null, $active, 'Kandy', 1, 3],
+        ['0712000001', 'Ridge Gourd', 45, 100.00, $fixed, null, null, $active, 'Kandy', 2, 2],
+
+        // Additional listings — Nimal Silva, Matale
+        ['0712000002', 'Red Onion', 200, 220.00, $fixed, null, null, $active, 'Matale', 4, 7],
+        ['0712000002', 'Long Beans', 65, 160.00, $fixed, null, null, $active, 'Matale', 2, 4],
+        ['0712000002', 'Sweet Potato', 150, 95.00, $fixed, null, null, ListingStatus::Closed, 'Matale', 14, 21],
+
+        // Additional listings — Sunethra Wickramasinghe, Nuwara Eliya
+        ['0712000003', 'Potato', 250, 180.00, $fixed, null, null, $active, 'Nuwara Eliya', 3, 5],
+        ['0712000003', 'Beetroot', 90, 100.00, $fixed, null, null, $active, 'Nuwara Eliya', 2, 3],
+        ['0712000003', 'Radish', 55, 70.00, $fixed, null, null, $active, 'Nuwara Eliya', 1, 1],
+
+        // Additional listings — Ranjith Bandara, Anuradhapura
+        ['0712000004', 'Maize', 2000, 85.00, $fixed, null, null, $active, 'Anuradhapura', 8, 12],
+        ['0712000004', 'Green Gram', 600, 150.00, $fixed, null, null, $active, 'Anuradhapura', 5, 3],
+        ['0712000004', 'Watermelon', 500, 75.00, $fixed, null, null, $active, 'Anuradhapura', 2, 4],
+    ];
 
         foreach (
             $listings as [
@@ -850,7 +871,7 @@ class DatabaseSeeder extends Seeder
     private function seedRatings(): void
     {
         $reviews = [
-            // buyer phone, farmer phone, written by ('buyer' | 'farmer'), score, comment
+        // buyer phone, farmer phone, written by ('buyer' | 'farmer'), score, comment
             ['0713000004', '0712000004', 'buyer', 5, 'The Samba paddy was clean and well dried, and loading was on time.'],
             ['0713000004', '0712000004', 'farmer', 5, 'Paid on time and easy to work with.'],
             ['0713000002', '0712000002', 'buyer', 4, 'Fresh green chillies, the delivery was a little late.'],
