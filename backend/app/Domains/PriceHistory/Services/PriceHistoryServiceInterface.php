@@ -7,7 +7,6 @@ use App\Domains\PriceHistory\DTOs\PriceHistoryFilterData;
 
 interface PriceHistoryServiceInterface
 {
-    /** Stores the price of every line of a paid or completed order (safe to call more than once). Returns lines recorded. */
     public function recordForOrder(Order $order, ?\Carbon\CarbonInterface $recordedAt = null): int;
 
     /** @return array{data: array, total: int, page: int, perPage: int} */

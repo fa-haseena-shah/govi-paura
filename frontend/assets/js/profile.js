@@ -45,6 +45,17 @@ document.addEventListener('DOMContentLoaded', () => {
         setField(name, value);
       }
 
+      // Populate the read-only vehicle display fields (rider profile page only)
+      const vehicleTypeEl = document.getElementById('vehicleTypeDisplay');
+      const vehicleNoEl   = document.getElementById('vehicleNoDisplay');
+      if (vehicleTypeEl && profile.vehicle_type != null) {
+        const labelMap = { bike: 'Bike', three_wheeler: 'Three-Wheeler', tractor: 'Tractor', lorry: 'Lorry' };
+        vehicleTypeEl.value = labelMap[profile.vehicle_type] ?? profile.vehicle_type;
+      }
+      if (vehicleNoEl && profile.vehicle_no != null) {
+        vehicleNoEl.value = profile.vehicle_no;
+      }
+
       // Update the display name shown in the page header (if the element exists)
       const displayName = document.getElementById('profileDisplayName');
       if (displayName && profile.full_name) {

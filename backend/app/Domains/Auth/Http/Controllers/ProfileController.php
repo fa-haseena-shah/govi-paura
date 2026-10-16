@@ -42,11 +42,16 @@ class ProfileController extends Controller
                 'region'  => $profile->region,
             ];
         } elseif ($this->isRole($user, 'rider')) {
+            $profile->loadMissing('vehicles');
+            $vehicle = $profile->vehicles->first();
+
             $data += [
-                'category' => $profile->category instanceof DeliveryCategory
+                'category'       => $profile->category instanceof DeliveryCategory
                     ? $profile->category->value
                     : $profile->category,
-                'region'   => $profile->region,
+                'region'         => $profile->region,
+                'vehicle_type'   => $vehicle?->vehicle_type?->value ?? $vehicle?->vehicle_type,
+                'vehicle_no'     => $vehicle?->vehicle_no,
             ];
         }
 

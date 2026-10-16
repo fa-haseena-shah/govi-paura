@@ -119,7 +119,6 @@ class RatingService implements RatingServiceInterface
     }
 
     // helpers
-
     private function orderOf(User $user, int $orderId): Order
     {
         $order = Order::find($orderId);
