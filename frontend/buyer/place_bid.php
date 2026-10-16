@@ -8,7 +8,6 @@ include __DIR__ . '/../includes/header.php';
 
 <div class="gp-grid cols-2" style="align-items:start;">
   <div class="gp-card" id="bidListingCard" style="display:none;">
-    <div class="listing-card__photo" style="height:180px;border-radius:var(--radius);margin-bottom:14px;"><img src="<?= BASE_URL ?>/assets/images/crops/carrots.svg" alt="Carrots produce photo"></div>
     <h3 id="bidListingName" style="margin-bottom:4px;"></h3>
     <p class="muted" id="bidListingMeta"></p>
     <div class="badge badge-warning" id="bidClosingBadge" style="margin-bottom:14px;display:none;">Closes <span id="bidClosingAt"></span></div>
