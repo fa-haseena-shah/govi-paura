@@ -546,7 +546,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>${gp.orderRef(o.id)}</td>
             <td>
               <strong>${esc(o.buyerBusinessName ?? o.buyerName ?? '—')}</strong>
-              <div class="muted" style="font-size:12px;">${esc(ratingLabel(o.buyerRating))}</div>
               ${o.buyerBusinessName && o.buyerName ? `<div class="muted" style="font-size:12.5px;">${esc(o.buyerName)}</div>` : ''}
               ${o.buyerPhone ? `<div style="font-size:12.5px;"><i class="bi bi-telephone"></i> <a href="tel:${esc(o.buyerPhone)}">${esc(o.buyerPhone)}</a></div>` : ''}
             </td>

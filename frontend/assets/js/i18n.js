@@ -39,7 +39,7 @@
       nav_manage_listings: 'Manage Listings',
       nav_manage_bids_orders: 'Bids & Orders',
       nav_manage_reviews: 'Reviews',
-      nav_complaints: 'Complaints',
+      nav_complaints: 'Helpdesk Contact',
       nav_reports: 'Reports',
       nav_system_logs: 'System Logs',
 
