@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('listings:close-expired-bidding')->everyMinute()->withoutOverlapping();
 Schedule::command('subscriptions:update-statuses')->dailyAt('00:10');
+Schedule::command('deliveries:enforce-sla')->everyFiveMinutes()->withoutOverlapping();

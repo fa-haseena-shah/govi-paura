@@ -681,7 +681,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${money(o.totalAmount)}</td>
           <td>${gp.paymentBadge(o)}</td>
           <td>${gp.orderStatusBadge(o.status)}</td>
-          <td class="no-export">${needsPayment(o) ? `<a class="btn btn-accent btn-sm" href="${BASE_URL_JS}/buyer/payment.php?id=${o.id}">Pay now</a>` : ''}</td>
+          <td class="no-export">
+            ${needsPayment(o) ? `<a class="btn btn-accent btn-sm" href="${BASE_URL_JS}/buyer/payment.php?id=${o.id}">Pay now</a>` : ''}
+            ${o.paymentStatus === 'paid' ? `<a class="btn btn-outline btn-sm" href="${BASE_URL_JS}/buyer/receipt.php?id=${o.id}"><i class="bi bi-receipt"></i> Receipt</a>` : ''}
+          </td>
         </tr>`).join('');
     }
 
@@ -837,7 +840,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const [next, ...rest] = queue;
         window.location.href = next
           ? `${BASE_URL_JS}/buyer/payment.php?id=${next}${rest.length ? `&queue=${rest.join(',')}` : ''}`
-          : `${BASE_URL_JS}/buyer/orders.php`;
+          : `${BASE_URL_JS}/buyer/receipt.php?id=${orderId}`;
       } catch (err) {
         formError.textContent = err.message;
         formError.style.display = '';

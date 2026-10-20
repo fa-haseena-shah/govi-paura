@@ -47,7 +47,7 @@ $pageTitle = 'Govi Paura — Fair Prices, Direct from the Farm';
 <header class="lp-hero">
   <div class="lp-hero__inner">
     <div>
-      <span class="lp-eyebrow"><i class="bi bi-stars"></i> <span data-i18n="lp_eyebrow">Web-Based B2B Farm-to-Retail Marketplace</span></span>
+      <span class="lp-eyebrow"><span data-i18n="lp_eyebrow">B2B Agricultural Marketplace</span></span>
       <h1 data-i18n-html="lp_hero_title">Sell straight from the <span>harvest</span> — no middleman in between.</h1>
       <p class="lead" data-i18n="lp_hero_lead">Govi Paura connects farmer co-operatives directly with retailers and restaurants — transparent pricing, two-sided ratings, and delivery coordinated over existing lorry routes.</p>
       <div class="lp-hero__cta">
@@ -57,7 +57,6 @@ $pageTitle = 'Govi Paura — Fair Prices, Direct from the Farm';
       <div class="lp-hero__stats">
         <div><b>30&ndash;40%</b><span data-i18n="lp_stat_margin">Middleman margin removed</span></div>
         <div><b>4</b><span data-i18n="lp_stat_roles">Roles: Farmer, Buyer, Rider, Admin</span></div>
-        <div><b>SI / EN</b><span data-i18n="lp_stat_lang">Sinhala-first interface</span></div>
       </div>
     </div>
     <div class="lp-hero__visual">
@@ -74,7 +73,7 @@ $pageTitle = 'Govi Paura — Fair Prices, Direct from the Farm';
       <div class="lp-flowcard arrow"><i class="bi bi-arrow-down"></i></div>
       <div class="lp-flowcard">
         <div class="ic" style="background:var(--rust-light);color:var(--rust);"><i class="bi bi-truck"></i></div>
-        <div><div class="t" data-i18n="lp_flow3_t">Rider delivers on an existing route</div><div class="s" data-i18n="lp_flow3_s">Shared lorry network, no new fleet</div></div>
+        <div><div class="t" data-i18n="lp_flow3_t">Rider delivers on an existing route</div><div class="s" data-i18n="lp_flow3_s">Maximizing efficiency</div></div>
       </div>
     </div>
   </div>
@@ -149,27 +148,28 @@ $pageTitle = 'Govi Paura — Fair Prices, Direct from the Farm';
   <div class="gp-grid cols-3">
     <div class="lp-feature">
       <div class="ic" style="background:var(--sage-light);color:var(--forest);"><i class="bi bi-graph-up-arrow"></i></div>
-      <div><h3 data-i18n="lp_feat1_t">Live Price History</h3><p data-i18n="lp_feat1_p">Aggregated, anonymised price trends by crop and region, so no one trades blind.</p></div>
+      <div><h3 data-i18n="lp_feat1_t">Price Trends</h3><p data-i18n="lp_feat1_p">Farmers receive better prices by trading based on aggregated, anonymised price trends by crop and region.</p></div>
     </div>
     <div class="lp-feature">
       <div class="ic" style="background:var(--gold-light);color:#8A6700;"><i class="bi bi-star-fill"></i></div>
-      <div><h3 data-i18n="lp_feat2_t">Two-Sided Ratings</h3><p data-i18n="lp_feat2_p">Farmers and buyers rate each other after every order, building a real trust score.</p></div>
+      <div><h3 data-i18n="lp_feat2_t">Two-Sided Ratings</h3><p data-i18n="lp_feat2_p">Farmers and buyers rate each other after orders, building trust.</p></div>
     </div>
     <div class="lp-feature">
-      <div class="ic" style="background:var(--rust-light);color:var(--rust);"><i class="bi bi-robot"></i></div>
-      <div><h3 data-i18n="lp_feat3_t">AI Chatbot Assistant</h3><p data-i18n="lp_feat3_p">Post a listing, check an order, or ask for a price trend in plain Sinhala or English.</p></div>
+      <div class="ic" style="background:var(--rust-light);color:var(--rust);"><i class="bi bi-patch-question-fill"></i></div>
+      <div><h3 data-i18n="lp_feat3_t">Constant Assistant</h3><p data-i18n="lp_feat3_p">Finding the platform challenging? Our team is available to guide you every step of the way</p></div>
     </div>
     <div class="lp-feature">
-      <div class="ic" style="background:#E4EDE2;color:var(--forest);"><i class="bi bi-chat-dots-fill"></i></div>
-      <div><h3 data-i18n="lp_feat4_t">SMS Fallback</h3><p data-i18n="lp_feat4_p">No smartphone or data? Post a harvest listing with a simple structured text message.</p></div>
+      <div class="ic" style="background:#E4EDE2;color:var(--forest);"><i class="bi bi-cash-coin"></i>
+      </div>
+      <div><h3 data-i18n="lp_feat4_t">SMS Fallback</h3><p data-i18n="lp_feat4_p">No smartphone or data? You won't be left behind on real-time updates.</p></div>
     </div>
     <div class="lp-feature">
       <div class="ic" style="background:var(--sage-light);color:var(--forest);"><i class="bi bi-map-fill"></i></div>
-      <div><h3 data-i18n="lp_feat5_t">Route-Aware Delivery</h3><p data-i18n="lp_feat5_p">Deliveries are matched to existing lorry routes instead of requiring a new fleet.</p></div>
+      <div><h3 data-i18n="lp_feat5_t">Order Updates</h3><p data-i18n="lp_feat5_p">Stay informed with timely notifications about new bids, orders, and delivery progress.</p></div>
     </div>
     <div class="lp-feature">
-      <div class="ic" style="background:var(--gold-light);color:#8A6700;"><i class="bi bi-translate"></i></div>
-      <div><h3 data-i18n="lp_feat6_t">Sinhala-First Design</h3><p data-i18n="lp_feat6_p">Every screen is built Sinhala-first with English as a toggle, not an afterthought.</p></div>
+      <div class="ic" style="background:var(--gold-light);color:#8A6700;"><i class="bi bi-patch-check-fill"></i></div>
+      <div><h3 data-i18n="lp_feat6_t">Verified User Profiles</h3><p data-i18n="lp_feat6_p">Build trust with verified user farmer and rider profiles.</p></div>
     </div>
   </div>
 </section>
@@ -196,13 +196,6 @@ $pageTitle = 'Govi Paura — Fair Prices, Direct from the Farm';
           <span class="name">Govi Paura</span>
         </div>
         <p style="font-size:13px;line-height:1.6;max-width:260px;" data-i18n="lp_footer_about">A web-based B2B marketplace connecting farmer co-operatives directly with retailers and restaurants across Sri Lanka.</p>
-      </div>
-      <div>
-        <h4 data-i18n="lp_footer_portals">Portals</h4>
-        <a href="<?= BASE_URL ?>/farmer/dashboard.php" data-i18n="role_farmer">Farmer</a>
-        <a href="<?= BASE_URL ?>/buyer/dashboard.php" data-i18n="role_buyer">Buyer</a>
-        <a href="<?= BASE_URL ?>/rider/dashboard.php" data-i18n="lp_portal_rider_title">Delivery Rider</a>
-        <a href="<?= BASE_URL ?>/admin/dashboard.php" data-i18n="role_admin">Admin</a>
       </div>
       <div>
         <h4 data-i18n="nav_account">Account</h4>

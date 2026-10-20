@@ -28,6 +28,10 @@ use App\Domains\Bidding\Events\BidAccepted;
 use App\Domains\Bidding\Events\BidPlaced;
 use App\Domains\Bidding\Events\BidRejected;
 use App\Domains\Order\Listeners\CreateOrderFromAcceptedBid;
+use App\Domains\Order\Events\OrderCreated;
+use App\Domains\Delivery\Listeners\CreateDeliveryForOrder;
+use App\Domains\Delivery\Services\DeliveryService;
+use App\Domains\Delivery\Services\DeliveryServiceInterface;
 use App\Domains\Notification\Listeners\SendNewBidAlert;
 use App\Domains\Verification\Services\VerificationServiceInterface;
 use App\Domains\Verification\Services\VerificationService;
@@ -38,6 +42,10 @@ use App\Domains\Subscription\Services\SubscriptionServiceInterface;
 use App\Domains\Subscription\Services\SubscriptionService;
 use App\Domains\Rating\Services\RatingServiceInterface;
 use App\Domains\Rating\Services\RatingService;
+use App\Domains\PriceHistory\Listeners\RecordTransactionPrice;
+use App\Domains\PriceHistory\Services\PriceHistoryService;
+use App\Domains\PriceHistory\Services\PriceHistoryServiceInterface;
+use App\Domains\Payment\Events\PaymentSucceeded;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -61,6 +69,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BidServiceInterface::class, BidService::class);
         $this->app->bind(SubscriptionServiceInterface::class, SubscriptionService::class);
         $this->app->bind(RatingServiceInterface::class, RatingService::class);
+        $this->app->bind(PriceHistoryServiceInterface::class, PriceHistoryService::class);
+        $this->app->bind(DeliveryServiceInterface::class, DeliveryService::class);
     }
 
     /**
@@ -70,7 +80,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        // short aliases stored in payments.payable_type
         Relation::morphMap([
             'order' => Order::class,
             'subscription' => Subscription::class,
@@ -78,6 +87,9 @@ class AppServiceProvider extends ServiceProvider
 
         Event::listen(BidAccepted::class, CreateOrderFromAcceptedBid::class);
         Event::listen(BidPlaced::class, SendNewBidAlert::class);
+        Event::listen(OrderCreated::class, CreateDeliveryForOrder::class);
+        Event::listen(PaymentSucceeded::class, RecordTransactionPrice::class);
+        Event::listen(OrderStatusChanged::class, [RecordTransactionPrice::class, 'handleStatusChange']);
         Event::subscribe(NotificationEventSubscriber::class);
     }
 }

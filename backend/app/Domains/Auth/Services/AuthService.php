@@ -122,9 +122,11 @@ class AuthService implements AuthServiceInterface
     private function createBuyerProfile(User $user, RegisterRequestData $data): void
     {
         Buyer::create([
-            'user_id' => $user->id,
+            'user_id'       => $user->id,
             'business_name' => $data->businessName,
             'business_type' => $data->businessType,
+            'address'       => $data->address,
+            'region'        => $data->region,
         ]);
     }
 

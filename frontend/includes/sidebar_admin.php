@@ -14,7 +14,7 @@
     <a href="<?= BASE_URL ?>/admin/manage_listings.php" class="<?= $active === 'manage_listings' ? 'active' : '' ?>"><i class="bi bi-basket"></i> <span data-i18n="nav_manage_listings">Manage Listings</span></a>
     <a href="<?= BASE_URL ?>/admin/manage_bids_orders.php" class="<?= $active === 'manage_bids_orders' ? 'active' : '' ?>"><i class="bi bi-receipt"></i> <span data-i18n="nav_manage_bids_orders">Bids & Orders</span></a>
     <a href="<?= BASE_URL ?>/admin/subscriptions.php" class="<?= $active === 'subscriptions' ? 'active' : '' ?>"><i class="bi bi-receipt"></i> <span data-i18n="nav_subscriptions">Monitor Subscription</span></a>
-    <a href="<?= BASE_URL ?>/admin/complaints.php" class="<?= $active === 'complaints' ? 'active' : '' ?>"><i class="bi bi-life-preserver"></i> <span data-i18n="nav_complaints">Helpdesk / Complaints</span></a>
+    <a href="<?= BASE_URL ?>/admin/complaints.php" class="<?= $active === 'complaints' ? 'active' : '' ?>"><i class="bi bi-life-preserver"></i> <span data-i18n="nav_complaints">Helpdesk Contact</span></a>
     <div class="gp-nav__group-label" data-i18n="nav_system">System</div>
     <a href="<?= BASE_URL ?>/admin/reports.php" class="<?= $active === 'reports' ? 'active' : '' ?>"><i class="bi bi-file-earmark-bar-graph"></i> <span data-i18n="nav_reports">Reports</span></a>
   </nav>

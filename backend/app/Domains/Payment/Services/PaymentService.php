@@ -58,9 +58,14 @@ class PaymentService implements PaymentServiceInterface
             throw new InvalidArgumentException('Order not found.');
         }
 
-        if ($order->farmer_id !== $confirmedByUserId) {
+        // the farmer, or the rider who is delivering this order, can confirm the cash was handed over
+        $isDeliveryRider = DB::table('deliveries')
+            ->where('order_id', $order->id)
+            ->where('rider_id', $confirmedByUserId)
+            ->exists();
+
+        if ($order->farmer_id !== $confirmedByUserId && !$isDeliveryRider) {
             throw new RuntimeException('You do not have permission to confirm payment for this order.');
-            // this should move to whichever rider is assigned to the delivery, not the farmer
         }
 
         $payment = Payment::where('payable_type', 'order')

@@ -8,7 +8,6 @@ use App\Models\User;
 
 interface NotificationServiceInterface
 {
-    /** Store an in-app notification for one user. */
     public function notify(int $userId, NotificationType $type, string $title, string $message, array $data = []): void;
 
     /**

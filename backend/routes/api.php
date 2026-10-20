@@ -3,9 +3,12 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Domains\Auth\Http\Controllers\AuthController;
+use App\Domains\Auth\Http\Controllers\ProfileController;
+use App\Domains\Reports\Http\Controllers\ReportController;
 use App\Domains\Listing\Http\Controllers\ListingController;
 use App\Domains\Order\Http\Controllers\OrderController;
 use App\Domains\Payment\Http\Controllers\PaymentController;
+use App\Domains\Payment\Http\Controllers\ReceiptController;
 use App\Domains\Notification\Http\Controllers\SmsLogController;
 use App\Domains\Bidding\Http\Controllers\BidController;
 use App\Domains\Verification\Http\Controllers\VerificationController;
@@ -14,6 +17,9 @@ use App\Domains\Admin\Http\Controllers\AdminManagementController;
 use App\Domains\Notification\Http\Controllers\NotificationController;
 use App\Domains\Subscription\Http\Controllers\SubscriptionController;
 use App\Domains\Rating\Http\Controllers\RatingController;
+use App\Domains\PriceHistory\Http\Controllers\PriceHistoryController;
+use App\Domains\Delivery\Http\Controllers\DeliveryController;
+use App\Domains\Delivery\Http\Controllers\DeliveryLocationController;
 use App\Http\Middleware\EnsureAccountActive;
 
 Route::get('/user', function (Request $request) {
@@ -26,10 +32,15 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
+    Route::get('/reports/{role}', [ReportController::class, 'download'])
+        ->whereIn('role', ['farmer', 'buyer', 'rider']);
 
     Route::get('/verification', [VerificationController::class, 'show']);
     Route::post('/verification/documents', [VerificationController::class, 'upload']);
     Route::get('/verification/documents/{document}/file', [VerificationController::class, 'file']);
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::patch('/profile', [ProfileController::class, 'update']);
+
 });
 
 Route::middleware(['auth:sanctum', EnsureAccountActive::class])->group(function () {
@@ -60,6 +71,7 @@ Route::middleware(['auth:sanctum', EnsureAccountActive::class])->group(function 
     Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus']);
     Route::post('/orders/{order}/pay', [PaymentController::class, 'payForOrder']);
     Route::post('/orders/{order}/confirm-cash-collected', [PaymentController::class, 'confirmCashCollected']);
+    Route::get('/orders/{order}/receipt', [ReceiptController::class, 'forOrder'])->whereNumber('order');
     Route::post('/bids', [BidController::class, 'store']); // buyer: submit bid
     Route::get('/bids/my', [BidController::class, 'myBids']); // buyer: my bids + status
     Route::get('/bids/{bid}', [BidController::class, 'show'])->whereNumber('bid');
@@ -84,6 +96,22 @@ Route::middleware(['auth:sanctum', EnsureAccountActive::class])->group(function 
     Route::get('/ratings/received', [RatingController::class, 'received']);
     Route::get('/ratings/given', [RatingController::class, 'given']);
     Route::get('/users/{user}/ratings', [RatingController::class, 'forUser']);
+    Route::get('/price-history', [PriceHistoryController::class, 'index']);
+    Route::get('/price-history/trends', [PriceHistoryController::class, 'trends']);
+    Route::get('/price-history/filters', [PriceHistoryController::class, 'filters']);
+    Route::get('/me/location', [DeliveryLocationController::class, 'show']);
+    Route::put('/me/location', [DeliveryLocationController::class, 'update']);
+    Route::get('/deliveries/opportunities', [DeliveryController::class, 'opportunities']);
+    Route::get('/deliveries/assigned', [DeliveryController::class, 'assigned']);
+    Route::get('/deliveries/history', [DeliveryController::class, 'history']);
+    Route::get('/deliveries/tracking', [DeliveryController::class, 'tracking']);
+    Route::get('/deliveries/{delivery}', [DeliveryController::class, 'show'])->whereNumber('delivery');
+    Route::get('/deliveries/{delivery}/map', [DeliveryController::class, 'map'])->whereNumber('delivery');
+    Route::post('/deliveries/{delivery}/claim', [DeliveryController::class, 'claim'])->whereNumber('delivery');
+    Route::post('/deliveries/{delivery}/release', [DeliveryController::class, 'release'])->whereNumber('delivery');
+    Route::patch('/deliveries/{delivery}/status', [DeliveryController::class, 'updateStatus'])->whereNumber('delivery');
+    Route::get('/orders/{order}/delivery', [DeliveryController::class, 'forOrder'])->whereNumber('order');
+    Route::get('/admin/deliveries', [DeliveryController::class, 'adminIndex']);
 });
 
 Route::get('/listings', [ListingController::class, 'index']);

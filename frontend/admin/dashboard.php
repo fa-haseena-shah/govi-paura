@@ -12,31 +12,31 @@ include __DIR__ . '/../includes/header.php';
   <div class="gp-stat"><div><div class="gp-stat__label">Paid Order Volume</div><div class="gp-stat__value" id="adminPaidOrderVolume">—</div></div><div class="gp-stat__icon i-revenue"><i class="bi bi-cash-coin"></i></div></div>
 </div>
 
-<div class="gp-card">
+<div class="gp-card" style="margin-bottom:15px;">
   <h3 style="margin-bottom:6px;">Verification requests</h3>
   <p class="muted">Farmers and riders must be approved before they can sell or deliver.</p>
   <a href="<?= BASE_URL ?>/admin/verify_users.php" class="btn btn-accent">Review requests</a>
 </div>
 
-<div class="gp-card">
+<div class="gp-card" style="margin-bottom:15px;">
   <h3 style="margin-bottom:6px;">User management</h3>
   <p class="muted">View and manage user accounts across all three roles.</p>
   <a href="<?= BASE_URL ?>/admin/manage_users.php" class="btn btn-accent">Manage users</a>
 </div>
 
-<div class="gp-card">
+<div class="gp-card" style="margin-bottom:15px;">
   <h3 style="margin-bottom:6px;">Listing management</h3>
   <p class="muted">Monitor and remove misleading harvest listings or create listings on behalf of farmers.</p>
   <a href="<?= BASE_URL ?>/admin/manage_listings.php" class="btn btn-accent">Manage listings</a>
 </div>
 
-<div class="gp-card">
+<div class="gp-card" style="margin-bottom:15px;">
   <h3 style="margin-bottom:6px;">Bid monitoring</h3>
   <p class="muted">Monitor bidding and order activities across the platform.</p>
   <a href="<?= BASE_URL ?>/admin/manage_bids_orders.php" class="btn btn-accent">Monitor bids</a>
 </div>
 
-<div class="gp-card">
+<div class="gp-card" style="margin-bottom:15px;">
   <h3 style="margin-bottom:6px;">Subscription monitoring</h3>
   <p class="muted">Riders’ subscription payment and transaction records. 
 </p>

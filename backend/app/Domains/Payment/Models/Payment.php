@@ -5,6 +5,7 @@ namespace App\Domains\Payment\Models;
 use App\Enums\PaymentTransactionStatus;
 use App\Enums\PaymentMethod;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Payment extends Model
@@ -26,6 +27,11 @@ class Payment extends Model
     public function payable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function receipt(): HasOne
+    {
+        return $this->hasOne(Receipt::class);
     }
 }
 

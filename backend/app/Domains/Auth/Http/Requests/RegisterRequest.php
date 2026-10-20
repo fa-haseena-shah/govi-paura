@@ -39,7 +39,7 @@ class RegisterRequest extends FormRequest
 
             // farmers only
             'nic' => ['required_if:role,' . UserType::Farmer->value, 'nullable', 'string', 'max:20', 'unique:farmers,nic'],
-            'address' => ['required_if:role,' . UserType::Farmer->value, 'nullable', 'string', 'max:500'],
+            'address' => ['required_if:role,' . UserType::Farmer->value . ',role,' . UserType::Buyer->value, 'nullable', 'string', 'max:500'],
             'region' => ['nullable', 'string', 'max:255'],
 
             // buyers only

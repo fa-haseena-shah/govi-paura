@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let page = 1;
     const load = async () => {
       const bids = type === 'bids';
-      head.innerHTML = `<tr>${(bids ? ['Produce', 'Buyer', 'Farmer', 'Bid amount', 'Quantity', 'Status', 'Placed'] : ['Order', 'Buyer', 'Farmer', 'Total', 'Payment', 'Order status', 'Placed']).map((name) => `<th>${name}</th>`).join('')}</tr>`;
+      head.innerHTML = `<tr>${(bids ? ['Produce', 'Buyer', 'Farmer', 'Bid amount', 'Quantity', 'Status', 'Placed'] : ['Order', 'Buyer', 'Farmer', 'Total', 'Payment', 'Placed']).map((name) => `<th>${name}</th>`).join('')}</tr>`;
       activityBody.innerHTML = `<tr><td colspan="7" class="muted">Loading ${type}…</td></tr>`;
       try {
         const result = await apiFetch(`/admin/activity?type=${type}&page=${page}&per_page=20`);
@@ -174,9 +174,8 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${escapeHtml(item.listing?.farmer?.full_name ?? '—')}</td><td>LKR ${Number(item.bid_amount).toLocaleString()}</td>
           <td>${escapeHtml(item.bid_qty)} kg</td><td>${badge(item.bid_status)}</td><td>${dateLabel(item.created_at)}</td></tr>` : `<tr>
           <td>#${item.id}</td><td>${escapeHtml(item.buyer?.full_name ?? '—')}</td><td>${escapeHtml(item.farmer?.full_name ?? '—')}</td>
-          <td>LKR ${Number(item.total_amount).toLocaleString()}</td><td>${badge(item.payment_status)}</td><td>
-          <select data-order-status="${item.id}" data-previous-status="${escapeHtml(item.status)}" aria-label="Order ${item.id} status"><option value="${escapeHtml(item.status)}" selected>${escapeHtml(item.status)}</option>${(nextOrderStatuses[item.status] ?? []).map((value) => `<option value="${value}">${value}</option>`).join('')}</select>
-          </td><td>${dateLabel(item.created_at)}</td></tr>`).join('') : `<tr><td colspan="7" class="muted">No ${type} found.</td></tr>`;
+          <td>LKR ${Number(item.total_amount).toLocaleString()}</td><td>${badge(item.payment_status)}</td>
+          <td>${dateLabel(item.created_at)}</td></tr>`).join('') : `<tr><td colspan="7" class="muted">No ${type} found.</td></tr>`;
         paginate(pagination, result, (selected) => { page = selected; load(); });
       } catch (err) { activityBody.innerHTML = '<tr><td colspan="7" class="muted">Could not load platform activity.</td></tr>'; failed(err); }
     };

@@ -40,7 +40,19 @@ class SmsAlertService implements SmsAlertServiceInterface
         $this->dispatch($farmer, SmsAlertType::NewBid, $message);
     }
 
-    // if this sms functionality fails, it should not disturb the order process so the 
+    public function sendDeliveryAtRiskAlert(User $admin, int $orderId, string $state, int $minutesLeft): void
+    {
+        $message = "Govi Paura [AT RISK]: Order #{$orderId} {$state} with {$minutesLeft} min left to its deadline.";
+        $this->dispatch($admin, SmsAlertType::DeliveryAtRisk, $message);
+    }
+
+    public function sendDeliveryOverdueAlert(User $admin, int $orderId, int $slaHours, string $state): void
+    {
+        $message = "Govi Paura [OVERDUE]: Order #{$orderId} missed its {$slaHours}-hour deadline and is still {$state}.";
+        $this->dispatch($admin, SmsAlertType::DeliveryOverdue, $message);
+    }
+
+    // if this sms functionality fails, it should not disturb the order process so the
     // errors are caught and handled here instead of throwing them
     private function dispatch(User $recipient, SmsAlertType $type, string $message): void
     {
@@ -55,10 +67,10 @@ class SmsAlertService implements SmsAlertServiceInterface
 
         SmsLog::create([
             'user_id' => $recipient->id,
-            'phone' => $recipient->phone,
-            'type' => $type,
+            'phone'   => $recipient->phone,
+            'type'    => $type,
             'message' => $message,
-            'status' => $status,
+            'status'  => $status,
         ]);
     }
 }

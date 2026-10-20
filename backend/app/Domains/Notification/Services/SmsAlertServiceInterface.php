@@ -12,6 +12,9 @@ interface SmsAlertServiceInterface
 
     public function sendLowStockAlert(User $farmer, Listing $listing): void;
 
-    // add later -- new bid sms alert
     public function sendNewBidAlert(User $farmer, string $buyerName, float $bidAmount, string $cropType): void;
+
+    public function sendDeliveryAtRiskAlert(User $admin, int $orderId, string $state, int $minutesLeft): void;
+
+    public function sendDeliveryOverdueAlert(User $admin, int $orderId, int $slaHours, string $state): void;
 }
